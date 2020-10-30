@@ -61,7 +61,9 @@ class simController(object):
         self.solver.advance( varargin=self.uc)
 
         self.postStep()
-        print(self.solver.xc)
+        print(str(self.solver.ci) + ", " + str(self.solver.xc.transpose())+ ", " + str(self.uc))
+        #print(self.solver.xc.transpose())
+        #print(self.uc)
 
     def simulate(self, tspan=None, x0=None, varargin=None):
 

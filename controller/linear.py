@@ -60,6 +60,7 @@ class linear(base):
         if self.K.shape[1] == 2*xdes.size:
             #TODO: Add zero velocities
             pass
+            print("Needs to add zero velocities")
 
         def regLinControl(t=None, x=None):
             if x is None:
@@ -72,8 +73,47 @@ class linear(base):
 
 
         linlaw = regLinControl
+        self.compute = linlaw
 
         return (linlaw, xdes)
+
+
+    def regulatorConstrained(self, xdes, cons=None):
+        if self.K.shape[1] == 2*xdes.size:
+            #TODO: Add zero velocities
+            pass
+            print("Needs to add zero velocities")
+
+        if cons is None:
+            linLaw = self.regulator(xdes=xdes)
+        else:
+            mins = cons.sat.min * np.ones_like(self.ueq)
+            maxs = cons.sat.max * np.ones_like(self.ueq)
+
+            def regLinControlSat(t=None, x=None):
+                if x is None:
+                    u = self.ueq + np.zeros((self.K.shape[0], 1))
+                else:
+                    u = self.ueq + np.matmul(self.K, (x - xdes))
+                    u = np.minimum(maxs, np.maximum(mins, u))
+
+                rc = xdes
+
+                return (u, rc)
+
+            linLaw = regLinControlSat
+
+        self.compute = linLaw
+
+        return (linLaw, xdes)
+
+
+
+
+
+
+
+
 
     def tracker(self, xdes, uFF=None, stateDep=False):
 

@@ -6,7 +6,6 @@ from simController import simController
 import matplotlib.pyplot as plt
 
 
-
 A      = np.array([[0, 1],[0.15, 0.25]]) 
 B      = np.array([[0],[1]])
 solver = niODERK4

@@ -6,7 +6,7 @@ from simController import simController
 import matplotlib.pyplot as plt
 from trajSynth.naive import naive
 from controlSystem import controlSystem
-
+from structures import ConsStruct
 
 A      = np.array([[0, 1],[0.15, 0.25]])
 B      = np.array([[0],[1]])
@@ -20,10 +20,11 @@ L = L.reshape((2,1))
 K      = -K
 bg     = 1
 istate = np.array([[0],[0]])
-#cons.sat.min = -5
-#cons.sat.max =  5
+cons = ConsStruct()
+cons.sat.min = -5
+cons.sat.max =  5
 
-sys = {'A': A, 'B': B, 'solver': solver, 'dt': dt, 'tspan': tspan, 'rtol': rtol, 'K': K, 'istate': istate}
+sys = {'A': A, 'B': B, 'solver': solver, 'dt': dt, 'tspan': tspan, 'rtol': rtol, 'K': K, 'istate': istate, 'cons': cons}
 
 #--[1.2] Instantiate the trajectory synthesizer.
 metaBuilder = {'regulator': naive.trajBuilder_LinearReg, 'tracker': naive.trajBuilder_LinearTracker}

@@ -61,7 +61,10 @@ class naive(base):
         xdes = []
 
         def linSysBuilder(istate, fstate):
-            (ctrl, xdes) = theControl.regulator(fstate)
+            if 'cons' in sys:
+                (ctrl, xdes) = theControl.regulatorConstrained(fstate, sys['cons'])
+            else:
+                (ctrl, xdes) = theControl.regulator(fstate)
 
             csim = simController(solver, ctrl)
             csim.initialize(tspan=tspan,x0=istate)
