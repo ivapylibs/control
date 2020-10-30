@@ -1,7 +1,7 @@
 from base import base
 import numpy as np
 import scipy.linalg
-
+from simController import simController
 
 def care(A, B, Q, R=None):
 
@@ -31,6 +31,12 @@ def care(A, B, Q, R=None):
 
 class linear(base):
 
+    class TrajStruct(object):
+        def __init__(self, tspan, x, u, statedep=False):
+            self.tspan = tspan
+            self.x = x
+            self.u = u
+            self.statedep = statedep
 
     def __init__(self, xeq=0, ueq=0, K=None):
         super(linear, self).__init__()
@@ -49,6 +55,26 @@ class linear(base):
 
         return LinearCEOM
 
+
+    def regulator(self, xdes):
+        if self.K.shape[1] == 2*xdes.size:
+            #TODO: Add zero velocities
+            pass
+
+        def regLinControl(t=None, x=None):
+            if x is None:
+                u = self.ueq + np.zeros((self.K.shape[0],1))
+            else:
+                u = self.ueq + np.matmul(self.K, (x-xdes))
+
+            rc = xdes
+            return (u, rc)
+
+
+        linlaw = regLinControl
+
+        return (linlaw, xdes)
+
     def tracker(self, xdes, uFF=None, stateDep=False):
 
         def trackLinControlWithFF(t=None, x=None):
@@ -66,3 +92,39 @@ class linear(base):
         linLaw = trackLinControlWithFF
 
         return linLaw
+
+
+    @staticmethod
+    def structBuilder(ceom, cfs):
+        solver = cfs['odeMethod'](ceom, cfs['dt'])
+
+        def theInitializer(tspan, istate, rsig, uFF, statedep=False):
+            control = cfs['controller'].tracker(rsig, uFF, statedep)
+
+            theSim = simController(solver, control)
+            theSim.initializeByStruct(tspan, istate)
+            return theSim
+
+        def theInitializerFromStruct(istate, theTraj):
+            if theTraj.statedep is None:
+                theTraj.statedep = False
+
+            theSim = theInitializer(theTraj.tspan, istate, theTraj.x, theTraj.u, theTraj.statedep)
+            return theSim
+
+        def reconfigure(theSim, tspan, istate, rsig, uFF, statedep):
+            control = cfs['controller'].buildTracker(rsig, uFF, statedep)
+            theSim.setController(control)
+
+            theSim.reset()
+            theSim.initializeByStruct(tspan, istate)
+
+        def reconfigureFromStruct(theSim, istate, theTraj):
+            if theTraj.statedep is None:
+                theTraj.statedep = False
+
+            reconfigure(theSim, theTraj.tspan, istate, theTraj.x, theTraj.u, theTraj.statedep)
+
+        simInit = {'firstBuild': theInitializer, 'reconfig': reconfigure, 'firstBuildFromStruct': theInitializerFromStruct, 'reconfigFromStruct': reconfigureFromStruct}
+
+        return simInit

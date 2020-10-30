@@ -30,6 +30,9 @@ class simController(object):
 
         self.u = np.zeros((u0.shape[0], self.solver.t.size))
 
+    def initializeByStruct(self, tspan, istate):
+        self.initialize(tspan=tspan, x0=istate['x'])
+
     def reset(self):
         self.solver.reset()
 
@@ -57,15 +60,19 @@ class simController(object):
 
         self.solver.advance( varargin=self.uc)
 
-    def simulate(self, tspan, x0=None, varargin=None):
+        self.postStep()
+        print(self.solver.xc)
 
-        if x0 is not None:
+    def simulate(self, tspan=None, x0=None, varargin=None):
+
+        if x0 is not None and tspan is not None:
             self.initialize(tspan=tspan, x0=x0)
         else:
             if self.solver.state != self.solver.INITIALIZED:
                 print("ERROR!")
             else:
-                self.initialize(tspan=tspan, x0=self.solver.xc)
+                if tspan is not None:
+                    self.initialize(tspan=tspan, x0=self.solver.xc)
 
 
         while self.solver.state != self.solver.DONE:
@@ -84,3 +91,4 @@ class simController(object):
 
         sol = simController.solution(t,x,u)
         return sol
+
