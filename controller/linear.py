@@ -136,10 +136,10 @@ class linear(base):
 
     @staticmethod
     def structBuilder(ceom, cfs):
-        solver = cfs['odeMethod'](ceom, cfs['dt'])
+        solver = cfs.odeMethod(ceom, cfs.dt)
 
         def theInitializer(tspan, istate, rsig, uFF, statedep=False):
-            control = cfs['controller'].tracker(rsig, uFF, statedep)
+            control = cfs.controller.tracker(rsig, uFF, statedep)
 
             theSim = simController(solver, control)
             theSim.initializeByStruct(tspan, istate)
@@ -153,7 +153,7 @@ class linear(base):
             return theSim
 
         def reconfigure(theSim, tspan, istate, rsig, uFF, statedep):
-            control = cfs['controller'].tracker(rsig, uFF, statedep)
+            control = cfs.controller.tracker(rsig, uFF, statedep)
             theSim.setController(control)
 
             theSim.reset()

@@ -25,7 +25,7 @@ sys.cons.sat.max = 5
 
 
 #--[1.2] Instantiate the trajectory synthesizer.
-metaBuilder = {'regulator': naive.trajBuilder_LinearReg, 'tracker': naive.trajBuilder_LinearTracker}
+metaBuilder = structure(regulator=naive.trajBuilder_LinearReg, tracker=naive.trajBuilder_LinearTracker)
 
 tMaker = naive(theSystem=sys, metaBuilder=metaBuilder)
 

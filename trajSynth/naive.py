@@ -22,8 +22,8 @@ class naive(base):
     def __init__(self, theSystem, metaBuilder):
         super(naive, self).__init__(theSystem=theSystem, metaBuilder=metaBuilder)
 
-        self.regulator = metaBuilder['regulator'](theSystem)
-        self.tracker = metaBuilder['tracker'](theSystem)
+        self.regulator = metaBuilder.regulator(theSystem)
+        self.tracker = metaBuilder.tracker(theSystem)
 
     def point2point(self, istate, fstate, tspan=None):
         ceom = self.regulator(istate, fstate)

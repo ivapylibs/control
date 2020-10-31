@@ -32,7 +32,7 @@ class simController(object):
         self.u = np.zeros((u0.shape[0], self.solver.t.size))
 
     def initializeByStruct(self, tspan, istate):
-        self.initialize(tspan=tspan, x0=istate['x'])
+        self.initialize(tspan=tspan, x0=istate.x)
 
     def reset(self):
         self.solver.reset()
