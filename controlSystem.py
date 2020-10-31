@@ -50,3 +50,10 @@ class controlSystem(object):
 
         self.addSim(simsol)
         self.iflag = False
+
+        return simsol
+
+
+    def addSim(self, simOut):
+        #if len(self.simOut) == 0:
+        self.simOut.append(simOut)

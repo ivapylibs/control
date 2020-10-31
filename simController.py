@@ -61,7 +61,7 @@ class simController(object):
         self.solver.advance( varargin=self.uc)
 
         self.postStep()
-        print(str(self.solver.ci) + ", " + str(self.solver.xc.transpose())+ ", " + str(self.uc))
+        #print(str(self.solver.ci) + ", " + str(self.solver.xc.transpose())+ ", " + str(self.uc))
         #print(self.solver.xc.transpose())
         #print(self.uc)
 
@@ -94,3 +94,6 @@ class simController(object):
         sol = simController.solution(t,x,u)
         return sol
 
+    def getState(self):
+        sol = simController.solution(t=self.solver.tc, x=self.solver.xc, u=self.uc)
+        return sol

@@ -59,7 +59,7 @@ class numIntegrator(object):
     ## @param[in] x0          The initial condition.
     #
     def initialize(self, tspan, x0):
-        x0 = np.array(x0)
+        x0 = np.array(x0).reshape((-1,1))
         self.extra = False
         tInt = np.arange(start=tspan[0], stop=tspan[1], step=self.dt)
 

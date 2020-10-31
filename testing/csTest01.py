@@ -50,3 +50,27 @@ cSim = controlSystem(ceom, tMaker, tTracker);
 istate = {'x': np.array([3,0]).reshape((2,1))}
 cSim.setInitialState(istate);
 sol = cSim.goto(np.array([0.3, 0]).reshape((2,1)))
+
+#==[3.1] Plot outcomes
+plt.figure(1)
+plt.plot(sol.t, sol.u[0,:], sol.t, sol.x[0,:])
+
+plt.figure(2)
+xv = np.array(sol.traj.x(sol.t))
+plt.plot(sol.t, sol.u[0,:], 'b', sol.t, xv[:,0,:], 'g-.',  sol.t, xv[:,1,:], 'g-.')
+
+
+#==[4] Run again from previous terminal point.
+#istate = sol.fstate
+#cSim.setInitialState(istate)
+#sol = cSim.goto([1.0, 0])
+
+#--[4.1] Plot outcomes.
+#plt.figure(3)
+#plt.plot(sol.t, sol.x)
+
+#plt.figure(4)
+#plt.plot(sol.t, sol.u, 'b', sol.t, sol.traj.x(sol.t),'g-.')
+
+
+plt.show()

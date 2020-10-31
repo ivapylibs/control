@@ -33,18 +33,30 @@ class naive(base):
             simout = ceom.simulate()
 
         if simout.x.shape[0]==1 and False:
-            self.xTraj = scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.x)
+            xTraj = scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.x)
         else:
             xgrid_interps = [scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.x[ind], bounds_error=False) for ind in range(simout.x.shape[0])]
-            self.xTraj = lambda t: np.array([g([t]) for g in xgrid_interps]).reshape((-1,1))
+            xTraj = lambda t: np.array([g([t]) for g in xgrid_interps]).reshape((-1,1))
 
         if simout.u.shape[0] == 1 and False:
-            self.uTraj = scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.u)
+            uTraj = scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.u)
         else:
             ugrid_interps = [scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.u[ind], bounds_error=False) for ind in range(simout.u.shape[0])]
-            self.uTraj = lambda t: np.array([g([t]) for g in ugrid_interps]).reshape((-1, 1))
+            uTraj = lambda t: np.array([g([t]) for g in ugrid_interps]).reshape((-1, 1))
 
-        tSol = linear.TrajStruct(tspan=simout.t, x=self.xTraj, u=self.uTraj)
+        def ValMapper(f):
+            def g(t):
+                try:
+                    outv = [f(x) for x in t]
+                except TypeError:
+                    outv = f(t)
+                return outv
+            return g
+
+        self.xTraj = ValMapper(xTraj)
+        self.uTraj = ValMapper(uTraj)
+
+        tSol = linear.TrajStruct(tspan=simout.t[[0,-1]], x=self.xTraj, u=self.uTraj)
         return tSol
 
 
