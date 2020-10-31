@@ -2,6 +2,7 @@
 
 import numpy as np
 from controller.base import base
+from structures import structure
 
 class simController(object):
 
@@ -91,9 +92,9 @@ class simController(object):
         x = self.solver.x
         u = self.u
 
-        sol = simController.solution(t,x,u)
+        sol = structure(t=t,x=x,u=u)
         return sol
 
     def getState(self):
-        sol = simController.solution(t=self.solver.tc, x=self.solver.xc, u=self.uc)
+        sol = structure(t=self.solver.tc, x=self.solver.xc, u=self.uc)
         return sol
