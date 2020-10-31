@@ -110,11 +110,11 @@ class naive(base):
         xdes = []
 
         def linSysBuilder(istate, desTraj):
-            ctrl = theControl.tracker(desTraj['x'], desTraj['u'], desTraj['statedep'])
+            ctrl = theControl.tracker(desTraj.x, desTraj.u, desTraj.statedep)
 
             csim = simController(solver, ctrl)
 
-            csim.initialize(tspan=desTraj['tspan'], x0=istate['x'])
+            csim.initialize(tspan=desTraj.tspan, x0=istate.x)
 
             return csim
 

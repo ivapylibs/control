@@ -33,9 +33,9 @@ class controlSystem(object):
 
         if duration is not None:
             tspan = [0, duration]
-            theTraj = self.trajGen.point2point(self.istate['x'], fstate, tspan)
+            theTraj = self.trajGen.point2point(self.istate.x, fstate, tspan)
         else:
-            theTraj = self.trajGen.point2point(self.istate['x'], fstate)
+            theTraj = self.trajGen.point2point(self.istate.x, fstate)
 
         if self.trackSim is None:
             self.trackSim = self.trackBuilder['firstBuildFromStruct'](self.istate, theTraj)

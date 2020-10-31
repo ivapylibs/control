@@ -37,7 +37,7 @@ ceom = linear().systemDynamics(actA,actB)
 
 theController = linear()
 theController.set(sys.K)
-cfs = {'dt': 0.05, 'odeMethod': niODERK4, 'controller': theController}
+cfs = structure(dt=0.05, odeMethod=niODERK4, controller=theController)
 
 tTracker =theController.structBuilder(ceom, cfs)
 
