@@ -94,8 +94,8 @@ class linear(base):
                 if x is None:
                     u = self.ueq + np.zeros((self.K.shape[0], 1))
                 else:
-                    u = self.ueq + np.matmul(self.K, (x - xdes))
-                    u = np.minimum(maxs, np.maximum(mins, u))
+                    uraw = self.ueq + np.matmul(self.K, (x - xdes))
+                    u = np.minimum(maxs, np.maximum(mins, uraw))
 
                 rc = xdes
 
