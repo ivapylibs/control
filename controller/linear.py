@@ -2,6 +2,7 @@ from base import base
 import numpy as np
 import scipy.linalg
 from simController import simController
+from structures import structure
 
 def care(A, B, Q, R=None):
 
@@ -165,6 +166,10 @@ class linear(base):
 
             reconfigure(theSim, theTraj.tspan, istate, theTraj.x, theTraj.u, theTraj.statedep)
 
-        simInit = {'firstBuild': theInitializer, 'reconfig': reconfigure, 'firstBuildFromStruct': theInitializerFromStruct, 'reconfigFromStruct': reconfigureFromStruct}
+        simInit = structure()
+        simInit.firstBuild=theInitializer
+        simInit.reconfig=reconfigure
+        simInit.firstBuildFromStruct=theInitializerFromStruct
+        simInit.reconfigFromStruct=reconfigureFromStruct
 
         return simInit

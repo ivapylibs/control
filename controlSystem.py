@@ -38,9 +38,9 @@ class controlSystem(object):
             theTraj = self.trajGen.point2point(self.istate.x, fstate)
 
         if self.trackSim is None:
-            self.trackSim = self.trackBuilder['firstBuildFromStruct'](self.istate, theTraj)
+            self.trackSim = self.trackBuilder.firstBuildFromStruct(self.istate, theTraj)
         else:
-            self.trackBuilder['reconfigFromStruct'](self.trackSim, self.istate, theTraj)
+            self.trackBuilder.reconfigFromStruct(self.trackSim, self.istate, theTraj)
 
         simsol = self.trackSim.simulate()
 
