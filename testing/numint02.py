@@ -1,5 +1,5 @@
 from niODERK4 import niODERK4
-import time
+from util import Timer
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 import numpy as np
@@ -11,17 +11,6 @@ dt = 0.125
 def swirlSys(t, x, varargin=None):
     return np.matmul(np.array([[-0.25, 1], [-1, -0.25]]), x)
 
-class Timer(object):
-    def __init__(self, name=None):
-        self.name = name
-
-    def __enter__(self):
-        self.tstart = time.time()
-
-    def __exit__(self, type, value, traceback):
-        if self.name:
-            print('[%s]' % self.name,)
-        print('Elapsed: %s' % (time.time() - self.tstart))
 
 print('scipy built-in.')
 

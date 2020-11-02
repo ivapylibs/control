@@ -5,19 +5,6 @@ import numpy as np
 import scipy.interpolate
 from structures import structure
 
-#TODO: Remove this class
-class sys(object):
-
-    def __init__(self, A, B, K, solver, tspan, dt, rtol):
-        self.A=A
-        self.B=B
-        self.K=K
-        self.solver = solver
-        self.tspan = tspan
-        self.dt = dt
-        self.rtol = rtol
-
-
 class naive(base):
 
     def __init__(self, theSystem, metaBuilder):
@@ -58,7 +45,7 @@ class naive(base):
         self.xTraj = ValMapper(xTraj)
         self.uTraj = ValMapper(uTraj)
 
-        tSol = linear.TrajStruct(tspan=simout.t[[0,-1]], x=self.xTraj, u=self.uTraj)
+        tSol = structure(tspan=simout.t[[0,-1]], x=self.xTraj, u=self.uTraj)
         return tSol
 
     def followPath(self, istate, desTraj):

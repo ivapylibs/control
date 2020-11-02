@@ -6,12 +6,6 @@ from structures import structure
 
 class simController(object):
 
-    class solution(object):
-        def __init__(self,t,x,u):
-            self.t=t
-            self.x=x
-            self.u=u
-
     def __init__(self, theSolver, theLaw):
         self.solver = theSolver
         self.cLaw = theLaw
