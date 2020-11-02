@@ -1,4 +1,4 @@
-
+from util import Timer
 
 
 class controlSystem(object):
@@ -52,6 +52,42 @@ class controlSystem(object):
         self.iflag = False
 
         return simsol
+
+
+    '''=============================== follow ==============================
+    %
+    % @brief  Specify that the system should follow the specified
+    %         trajectory.
+    %
+    % @param[in]  desTraj Desired trajectory structure. 
+    %
+    % @param[out] simsol  Solution to the current simulated time span.
+    %'''
+
+    def follow(self, desTraj):
+
+        if (not self.iflag):
+            print('Error! Defined a terminal system state, but there is no initial state.')
+
+        theTraj = self.trajGen.followPath(self.istate, desTraj)
+
+        if self.trackSim is None:
+            self.trackSim = self.trackBuilder.firstBuildFromStruct(self.istate, theTraj)
+        else:
+            self.trackBuilder.reconfigFromStruct(self.trackSim, self.istate, theTraj)
+
+        with Timer(name="Sim"):
+            simsol = self.trackSim.simulate()
+
+        simsol.traj = theTraj
+        simsol.istate = self.istate
+        simsol.fstate = self.trackSim.getState()
+
+        self.addSim(simsol)
+        self.iflag = False
+
+        return simsol
+
 
 
     def addSim(self, simOut):

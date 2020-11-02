@@ -6,7 +6,7 @@ from simController import simController
 import matplotlib.pyplot as plt
 from trajSynth.naive import naive
 from controlSystem import controlSystem
-from structures import structure, ConsStruct
+from structures import structure
 
 sys = structure()
 
@@ -43,7 +43,7 @@ tTracker =theController.structBuilder(ceom, cfs)
 
 
 #%==[3] Pack together into a controlSystem object and simulate.
-cSim = controlSystem(ceom, tMaker, tTracker);
+cSim = controlSystem(ceom, tMaker, tTracker)
 
 istate = structure(x=np.array([3,0]).reshape((2,1)))
 cSim.setInitialState(istate)

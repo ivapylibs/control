@@ -98,3 +98,11 @@ class simController(object):
     def getState(self):
         sol = structure(t=self.solver.tc, x=self.solver.xc, u=self.uc)
         return sol
+
+    @staticmethod
+    def linearControlSys(A, B):
+        def LinearCEOM(t, x, u):
+            dx = np.matmul(A,x) + np.matmul(B,u)
+            return dx
+
+        return LinearCEOM

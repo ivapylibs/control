@@ -13,7 +13,7 @@ class base(object):
     def point2point(self, istate, fstate):
         pass
 
-    def followPath(selfistate, desTraj):
+    def followPath(self, istate, desTraj):
         pass
 
     @staticmethod

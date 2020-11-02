@@ -32,6 +32,7 @@ def care(A, B, Q, R=None):
 
 class linear(base):
 
+    #TODO remove this class
     class TrajStruct(object):
         def __init__(self, tspan, x, u, statedep=False):
             self.tspan = tspan

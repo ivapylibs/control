@@ -5,6 +5,7 @@ import numpy as np
 import scipy.interpolate
 from structures import structure
 
+#TODO: Remove this class
 class sys(object):
 
     def __init__(self, A, B, K, solver, tspan, dt, rtol):
@@ -58,6 +59,38 @@ class naive(base):
         self.uTraj = ValMapper(uTraj)
 
         tSol = linear.TrajStruct(tspan=simout.t[[0,-1]], x=self.xTraj, u=self.uTraj)
+        return tSol
+
+    def followPath(self, istate, desTraj):
+        ceom = self.tracker(istate, desTraj)
+
+        simout = ceom.simulate()
+
+        if simout.x.shape[0]==1 and False:
+            xTraj = scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.x)
+        else:
+            xgrid_interps = [scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.x[ind], bounds_error=False) for ind in range(simout.x.shape[0])]
+            xTraj = lambda t: np.array([g([t]) for g in xgrid_interps]).reshape((-1,1))
+
+        if simout.u.shape[0] == 1 and False:
+            uTraj = scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.u)
+        else:
+            ugrid_interps = [scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.u[ind], bounds_error=False) for ind in range(simout.u.shape[0])]
+            uTraj = lambda t: np.array([g([t]) for g in ugrid_interps]).reshape((-1, 1))
+
+        def ValMapper(f):
+            def g(t):
+                try:
+                    outv = [f(x) for x in t]
+                except TypeError:
+                    outv = f(t)
+                return outv
+            return g
+
+        self.xTraj = ValMapper(xTraj)
+        self.uTraj = ValMapper(uTraj)
+
+        tSol = structure(tspan=simout.t[[0, -1]], x=self.xTraj, u=self.uTraj)
         return tSol
 
 
