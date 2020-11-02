@@ -3,6 +3,7 @@ from simController import simController
 from controller.linear import linear
 import numpy as np
 import scipy.interpolate
+from structures import structure
 
 class sys(object):
 
@@ -21,8 +22,8 @@ class naive(base):
     def __init__(self, theSystem, metaBuilder):
         super(naive, self).__init__(theSystem=theSystem, metaBuilder=metaBuilder)
 
-        self.regulator = metaBuilder['regulator'](theSystem)
-        self.tracker = metaBuilder['tracker'](theSystem)
+        self.regulator = metaBuilder.regulator(theSystem)
+        self.tracker = metaBuilder.tracker(theSystem)
 
     def point2point(self, istate, fstate, tspan=None):
         ceom = self.regulator(istate, fstate)
@@ -63,28 +64,23 @@ class naive(base):
     @staticmethod
     def trajBuilder_LinearReg(sys):
 
-        rtol = sys['rtol']
-        tspan = sys['tspan']
-        A = sys['A']
-        B = sys['B']
-        K = sys['K']
-        dt = sys['dt']
-
+        #Doesn't do anything?
         xdes = []
 
         def linSysBuilder(istate, fstate):
             if 'cons' in sys:
-                (ctrl, xdes) = theControl.regulatorConstrained(fstate, sys['cons'])
+                (ctrl, xdes) = theControl.regulatorConstrained(fstate, sys.cons)
             else:
                 (ctrl, xdes) = theControl.regulator(fstate)
 
             csim = simController(solver, ctrl)
-            csim.initialize(tspan=tspan,x0=istate)
+            csim.initialize(tspan=sys.tspan,x0=istate)
 
             return csim
 
+        # Doesn't do anything?
         def detectArrival(t, x):
-            errNorm = np.linalg.norm(x - xdes) -  rtol
+            errNorm = np.linalg.norm(x - xdes) -  sys.rtol
             if errNorm < 0:
                 errNorm = 0
 
@@ -93,15 +89,15 @@ class naive(base):
 
             return (errNorm, isterminal, direction)
 
-        opts = {'event': detectArrival}
+        # Doesn't do anything?
+        opts = structure(event=detectArrival)
 
-        ceom =  linear().systemDynamics(A, B)
-        #ceom =  simController.linearControlSys(A, B)
-        solver = sys['solver'](ceom, dt, opts)
+        ceom =  linear().systemDynamics(sys.A, sys.B)
+        solver = sys.solver(ceom, sys.dt, opts)
 
         theControl = linear()
 
-        theControl.set(K)
+        theControl.set(sys.K)
 
         theBuilder = linSysBuilder
 
@@ -111,26 +107,19 @@ class naive(base):
     @staticmethod
     def trajBuilder_LinearTracker(sys):
 
-        rtol = sys['rtol']
-        tspan = sys['tspan']
-        A = sys['A']
-        B = sys['B']
-        K = sys['K']
-        dt = sys['dt']
-
         xdes = []
 
         def linSysBuilder(istate, desTraj):
-            ctrl = theControl.tracker(desTraj['x'], desTraj['u'], desTraj['statedep'])
+            ctrl = theControl.tracker(desTraj.x, desTraj.u, desTraj.statedep)
 
             csim = simController(solver, ctrl)
 
-            csim.initialize(tspan=desTraj['tspan'], x0=istate['x'])
+            csim.initialize(tspan=desTraj.tspan, x0=istate.x)
 
             return csim
 
         def detectArrival(t, x):
-            errNorm = np.linalg.norm(x - xdes) - rtol
+            errNorm = np.linalg.norm(x - xdes) - sys.rtol
             if errNorm < 0:
                 errNorm = 0
 
@@ -139,15 +128,15 @@ class naive(base):
 
             return (errNorm, isterminal, direction)
 
-        opts = {'event': detectArrival}
+        opts = structure(event=detectArrival)
 
-        ceom = linear().systemDynamics(A,B)
+        ceom = linear().systemDynamics(sys.A,sys.B)
         #ceom = simController.linearControlSys(A, B)
-        solver = sys['solver'](ceom, dt, opts)
+        solver = sys.solver(ceom, sys.dt, opts)
 
         theControl = linear()
 
-        theControl.set(K)
+        theControl.set(sys.K)
 
         theBuilder = linSysBuilder
 

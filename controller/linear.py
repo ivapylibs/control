@@ -2,6 +2,7 @@ from base import base
 import numpy as np
 import scipy.linalg
 from simController import simController
+from structures import structure
 
 def care(A, B, Q, R=None):
 
@@ -94,8 +95,8 @@ class linear(base):
                 if x is None:
                     u = self.ueq + np.zeros((self.K.shape[0], 1))
                 else:
-                    u = self.ueq + np.matmul(self.K, (x - xdes))
-                    u = np.minimum(maxs, np.maximum(mins, u))
+                    uraw = self.ueq + np.matmul(self.K, (x - xdes))
+                    u = np.minimum(maxs, np.maximum(mins, uraw))
 
                 rc = xdes
 
@@ -136,10 +137,10 @@ class linear(base):
 
     @staticmethod
     def structBuilder(ceom, cfs):
-        solver = cfs['odeMethod'](ceom, cfs['dt'])
+        solver = cfs.odeMethod(ceom, cfs.dt)
 
         def theInitializer(tspan, istate, rsig, uFF, statedep=False):
-            control = cfs['controller'].tracker(rsig, uFF, statedep)
+            control = cfs.controller.tracker(rsig, uFF, statedep)
 
             theSim = simController(solver, control)
             theSim.initializeByStruct(tspan, istate)
@@ -153,7 +154,7 @@ class linear(base):
             return theSim
 
         def reconfigure(theSim, tspan, istate, rsig, uFF, statedep):
-            control = cfs['controller'].tracker(rsig, uFF, statedep)
+            control = cfs.controller.tracker(rsig, uFF, statedep)
             theSim.setController(control)
 
             theSim.reset()
@@ -165,6 +166,10 @@ class linear(base):
 
             reconfigure(theSim, theTraj.tspan, istate, theTraj.x, theTraj.u, theTraj.statedep)
 
-        simInit = {'firstBuild': theInitializer, 'reconfig': reconfigure, 'firstBuildFromStruct': theInitializerFromStruct, 'reconfigFromStruct': reconfigureFromStruct}
+        simInit = structure()
+        simInit.firstBuild=theInitializer
+        simInit.reconfig=reconfigure
+        simInit.firstBuildFromStruct=theInitializerFromStruct
+        simInit.reconfigFromStruct=reconfigureFromStruct
 
         return simInit
