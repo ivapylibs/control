@@ -18,11 +18,13 @@ class linQuadCopter(controlSystem):
 
         t = self.simOut[-1].t
         x = self.simOut[-1].x
-
+        u = self.simOut[-1].u
 
         if (haveDes):
-           xDes = desTraj.x(t)
-           uDes = desTraj.u(t)
+            xDes = np.array(desTraj.x(t))
+            uDes = np.array(desTraj.u(t))
+            xDes = xDes.reshape((-1, len(xDes)))
+            uDes = uDes.reshape((-1, len(uDes)))
 
         #fh = plt.figure(fn);
         #clf
@@ -36,49 +38,55 @@ class linQuadCopter(controlSystem):
         #legend('$x$','$y$','$z$','interpreter','latex');
         #set(fh, 'Name', 'Quad-Copter Position');
 
-        '''
-        fn = fn + 1;
-        fh = figure(fn);
+
+        fn = fn + 1
+        fh = plt.figure(fn)
         #clf;
-        plot(this.simOut(si).t, this.simOut(si).x([7:9],:), sigArgs{:});
+        plt.plot(t, x[6:9,:].transpose())
+
+        fn = fn + 1
+        fh = plt.figure(fn)
         if (haveDes):
             #hold on;
-            #plot(this.simOut(si).t, xDes([7:9],:), desArgs{:});
+            plt.plot(t, xDes[6:9,:].transpose())
             #hold off;
+            pass
 
         #legend('$\dot x$','$\dot y$','$\dot z$','interpreter','latex');
         #set(fh, 'Name', 'Quad-Copter Velocity');
 
-        fn = fn + 1;
-        fh = figure(fn);
+
+        fn = fn + 1
+        fh = plt.figure(fn)
         #clf;
-        plot(this.simOut(si).t, (180/pi)*this.simOut(si).x([4:6],:), sigArgs{:});
+        plt.plot(t, (180/np.pi)*x[3:6,:].transpose())
         if (haveDes):
             #hold on;
-            #plot(this.simOut(si).t, (180/pi)*xDes([4:6],:), desArgs{:});
+            #plt.plot(t, (180/np.pi)*xDes[3:6,:].transpose())
             #hold off;
             pass
 
         #legend('$R$','$P$','$Y$','interpreter','latex');
         #set(fh, 'Name', 'Quad-Copter Euler Angular States');
 
-        fn = fn + 1;
-        fh = figure(fn);
-        clf;
-        plot(this.simOut(si).t, (180/pi)*this.simOut(si).x([10:12],:), sigArgs{:});
-        if (haveDes)
-            hold on;
-            plot(this.simOut(si).t, (180/pi)*xDes([10:12],:), desArgs{:});
-            hold off;
-        end
-        legend('$\dot R$','$\dot P$','$\dot Y$','interpreter','latex');
-        set(fh, 'Name', 'Quad-Copter Euler Angular Rates');
+        fn = fn + 1
+        fh = plt.figure(fn)
+        #clf;
+        plt.plot(t, (180/np.pi)*x[9:12,:].transpose())
+        if (haveDes):
+            #hold on;
+            #plt.plot(t, (180/np.pi)*xDes[9:12,:])
+            #hold off;
+            pass
 
-        fn = fn + 1;
-        fh = figure(fn);
-        clf;
-        plot3(this.simOut(si).x(1,:), this.simOut(si).x(2,:), ...
-                                      this.simOut(si).x(3,:), sigArgs{:});
+        #legend('$\dot R$','$\dot P$','$\dot Y$','interpreter','latex');
+        #set(fh, 'Name', 'Quad-Copter Euler Angular Rates');
+
+        '''
+        fn = fn + 1
+        fh = figure(fn)
+        #clf
+        plot3(x(1,:), this.simOut(si).x(2,:), this.simOut(si).x(3,:), sigArgs{:});
         hold on;
         if (haveDes):
             plot3(xDes(1,:), xDes(2,:), xDes(3,:), desArgs{:});
@@ -96,15 +104,15 @@ class linQuadCopter(controlSystem):
         ylabel('$z$','interpreter','latex');
         axis equal;
         set(fh, 'Name', 'Quad-Copter Parametric Plot');
-  
-        fn = fn + 1;
-        fh = figure(fn);
+        '''
+        fn = fn + 1
+        fh = plt.figure(fn)
         #clf;
-        plot(this.simOut(si).t,this.simOut(si).u, sigArgs{:});
-        if (haveDes)
-            hold on;
-            plot(this.simOut(si).t, uDes, desArgs{:});
-            hold off;
+        plt.plot(t,u.transpose())
+        if (haveDes):
+            #hold on;
+            plt.plot(t, uDes.transpose())
+            #hold off;
 
         #hold on;
         #%plot(this.simOut(si).t([1,end]), this.controller.ueq*[1 1],'-.');
@@ -112,7 +120,7 @@ class linQuadCopter(controlSystem):
         #hold off;
         #legend('$u_1$','$u_2$','$u_3$','$u_4$','interpreter','latex');
         #set(fh, 'Name', 'Quad-Copter Control Signal');
-        '''
+
 
         plt.show()
 
