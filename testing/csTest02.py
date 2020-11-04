@@ -42,8 +42,8 @@ tspan = np.array([0, 20])
 ra = 0.75
 rw = 1.0/3
 
-rsig = lambda t: np.array([ [ra * np.sin(rw*t)],
-                            [(ra * rw)*np.cos(rw * t) ]])
+rsig = lambda t: np.vstack((ra * np.sin(rw*t),
+                            (ra * rw)*np.cos(rw * t)))
 xacc = lambda t: -(ra*rw*rw)*np.sin(rw*t)
 
 sFF = 1                                # Preferred since not following
@@ -81,11 +81,11 @@ sol = cSim.follow(desTraj)
 plt.figure(1)
 plt.plot(sol.t, sol.x[0,:], sol.t, sol.x[1,:])
 rsigv = rsig(sol.t)
-plt.plot(sol.t, rsigv[0,0,:], ':', sol.t, rsigv[1,0,:], ':')
+plt.plot(sol.t, rsigv.transpose(), ':')
 
 plt.figure(2)
 uv = np.array(sol.traj.u(sol.t))
-plt.plot(sol.t, sol.u[0,:], 'b', sol.t, uv[:,0,:], 'g-.')
+plt.plot(sol.t, sol.u[0,:], 'b', sol.t, uv[0,:], 'g-.')
 
 #==[5] Run again from previous terminal point.
 istate.x = np.array([[0.1],[0]])
@@ -94,10 +94,10 @@ sol = cSim.follow(desTraj=desTraj)
 
 #--[5.1] Plot outcomes.
 plt.figure(3)
-plt.plot(sol.t, sol.x[0,:], sol.t, sol.x[1,:])
+plt.plot(sol.t, sol.x.transpose())
 
 plt.figure(4)
 uv = np.array(sol.traj.u(sol.t))
-plt.plot(sol.t, sol.u[0,:], 'b', sol.t, uv[:,0,:], 'g-.')
+plt.plot(sol.t, sol.u[0,:], 'b', sol.t, uv[0,:], 'g-.')
 
 plt.show()

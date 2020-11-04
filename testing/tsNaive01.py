@@ -37,10 +37,10 @@ time = np.arange(start=sys.tspan[0], stop=sys.tspan[1], step=pdt)
 
 plt.figure(1)
 xv = np.array(tMaker.xTraj(time))
-plt.plot(time, xv[:,0,:], time, xv[:,1,:])
+plt.plot(time, xv.transpose())
 
 plt.figure(2)
 uv = np.array(tMaker.uTraj(time))
-plt.plot(time, uv[:,0,:])
+plt.plot(time, uv[0,:])
 
 plt.show()

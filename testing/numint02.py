@@ -12,23 +12,19 @@ def swirlSys(t, x, varargin=None):
     return np.matmul(np.array([[-0.25, 1], [-1, -0.25]]), x)
 
 
-print('scipy built-in.')
-
-with Timer():
+with Timer('scipy built-in'):
     to = np.arange(start=tspan[0], stop=tspan[1], step=dt)
     to = np.append(to,tspan[1])
     xo = odeint(func=swirlSys, y0=x0, t=to, tfirst=True)
 
-print('numIntegrator versions:')
-
-with Timer():
+with Timer('numIntegrator'):
     scheme = niODERK4(swirlSys, dt)
     [ti,xi] = scheme.integrate(tspan, x0.reshape((2,1)))
 
 xo = np.transpose(xo)
 
 plt.figure(1)
-plt.plot(to, xo[0,:], 'g-.', to, xo[1,:], 'g-.', ti, xi[0,:], 'b-', ti, xi[1,:], 'b-')
+plt.plot(to, xo.transpose(), 'g-.', ti, xi.transpose(), 'b-')
 #plt.legend('ode45','ode45','numInt','numInt');
 
 

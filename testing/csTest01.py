@@ -51,11 +51,11 @@ sol = cSim.goto(np.array([0.3, 0]).reshape((2,1)))
 
 #==[3.1] Plot outcomes
 plt.figure(1)
-plt.plot(sol.t, sol.x[0,:], sol.t, sol.x[1,:])
+plt.plot(sol.t, sol.x.transpose())
 
 plt.figure(2)
 xv = np.array(sol.traj.x(sol.t))
-plt.plot(sol.t, sol.u[0,:], 'b', sol.t, xv[:,0,:], 'g-.',  sol.t, xv[:,1,:], 'g-.')
+plt.plot(sol.t, sol.u[0,:], 'b', sol.t, xv.transpose(), 'g-.')
 
 
 #==[4] Run again from previous terminal point.
@@ -65,11 +65,11 @@ sol = cSim.goto(np.array([1.0, 0]).reshape((2,1)))
 
 #--[4.1] Plot outcomes.
 plt.figure(3)
-plt.plot(sol.t, sol.x[0,:], sol.t, sol.x[1,:])
+plt.plot(sol.t, sol.x.transpose())
 
 plt.figure(4)
 xv = np.array(sol.traj.x(sol.t))
-plt.plot(sol.t, sol.u[0,:], 'b', sol.t, xv[:,0,:],'g-.', sol.t, xv[:,1,:],'g-.')
+plt.plot(sol.t, sol.u[0,:], 'b', sol.t, xv.transpose(),'g-.')
 
 
 plt.show()

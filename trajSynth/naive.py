@@ -25,25 +25,16 @@ class naive(base):
             xTraj = scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.x)
         else:
             xgrid_interps = [scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.x[ind], bounds_error=False) for ind in range(simout.x.shape[0])]
-            xTraj = lambda t: np.array([g([t]) for g in xgrid_interps]).reshape((-1,1))
+            xTraj = lambda t: np.vstack([g(np.array(t).reshape(-1,)) for g in xgrid_interps])
 
         if simout.u.shape[0] == 1 and False:
             uTraj = scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.u)
         else:
             ugrid_interps = [scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.u[ind], bounds_error=False) for ind in range(simout.u.shape[0])]
-            uTraj = lambda t: np.array([g([t]) for g in ugrid_interps]).reshape((-1, 1))
+            uTraj = lambda t: np.vstack([g(np.array(t).reshape(-1,)) for g in ugrid_interps])
 
-        def ValMapper(f):
-            def g(t):
-                try:
-                    outv = np.hstack([f(x) for x in t])
-                except TypeError:
-                    outv = f(t)
-                return outv
-            return g
-
-        self.xTraj = ValMapper(xTraj)
-        self.uTraj = ValMapper(uTraj)
+        self.xTraj = xTraj
+        self.uTraj = uTraj
 
         tSol = structure(tspan=simout.t[[0,-1]], x=self.xTraj, u=self.uTraj)
         return tSol
@@ -57,25 +48,16 @@ class naive(base):
             xTraj = scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.x)
         else:
             xgrid_interps = [scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.x[ind], bounds_error=False) for ind in range(simout.x.shape[0])]
-            xTraj = lambda t: np.array([g([t]) for g in xgrid_interps]).reshape((-1,1))
+            xTraj = lambda t: np.vstack([g(np.array(t).reshape(-1,)) for g in xgrid_interps])
 
         if simout.u.shape[0] == 1 and False:
             uTraj = scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.u)
         else:
             ugrid_interps = [scipy.interpolate.RegularGridInterpolator(points=(simout.t,), values=simout.u[ind], bounds_error=False) for ind in range(simout.u.shape[0])]
-            uTraj = lambda t: np.array([g([t]) for g in ugrid_interps]).reshape((-1, 1))
+            uTraj = lambda t: np.vstack([g(np.array(t).reshape(-1,)) for g in ugrid_interps])
 
-        def ValMapper(f):
-            def g(t):
-                try:
-                    outv = [f(x) for x in t]
-                except TypeError:
-                    outv = f(t)
-                return outv
-            return g
-
-        self.xTraj = ValMapper(xTraj)
-        self.uTraj = ValMapper(uTraj)
+        self.xTraj = xTraj
+        self.uTraj = uTraj
 
         tSol = structure(tspan=simout.t[[0, -1]], x=self.xTraj, u=self.uTraj)
         return tSol
