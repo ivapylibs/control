@@ -1,5 +1,5 @@
 from util import Timer
-
+import numpy as np
 
 class controlSystem(object):
 
@@ -18,6 +18,11 @@ class controlSystem(object):
         self.iflag = False
 
     def setInitialState(self, istate):
+        #TODO: Ensure that this always works
+        state_size = self.trajGen.system.B.shape[0]
+        if state_size == 2*istate.x.size:
+            istate.x = np.pad(istate.x.flatten(), (0, istate.x.size), mode='constant').reshape((state_size, 1))
+
         self.istate = istate
         self.iflag = True
 

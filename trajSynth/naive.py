@@ -93,6 +93,9 @@ class naive(base):
             else:
                 (ctrl, xdes) = theControl.regulator(fstate)
 
+            if theControl.K.shape[1] == 2 * istate.size:
+                istate = np.pad(istate.flatten(), (0,istate.size), mode='constant').reshape((theControl.K.shape[1],1))
+
             csim = simController(solver, ctrl)
             csim.initialize(tspan=sys.tspan,x0=istate)
 
@@ -116,8 +119,10 @@ class naive(base):
         solver = sys.solver(ceom, sys.dt, opts)
 
         theControl = linear()
-
-        theControl.set(sys.K)
+        if 'K' in sys:
+            theControl.set(sys.K)
+        elif 'Q' in sys:
+            theControl.setByCareFromStruct(sys)
 
         theBuilder = linSysBuilder
 
@@ -131,6 +136,9 @@ class naive(base):
 
         def linSysBuilder(istate, desTraj):
             ctrl = theControl.tracker(desTraj.x, desTraj.u, desTraj.statedep)
+
+            if theControl.K.shape[1] == 2 * istate.x.size:
+                istate.x = np.pad(istate.x.flatten(), (0,istate.x.size), mode='constant').reshape((theControl.K.shape[1],1))
 
             csim = simController(solver, ctrl)
 
@@ -155,8 +163,10 @@ class naive(base):
         solver = sys.solver(ceom, sys.dt, opts)
 
         theControl = linear()
-
-        theControl.set(sys.K)
+        if 'K' in sys:
+            theControl.set(sys.K)
+        elif 'Q' in sys:
+            theControl.setByCareFromStruct(sys)
 
         theBuilder = linSysBuilder
 

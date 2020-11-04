@@ -40,21 +40,39 @@ class linear(base):
         if K is not None:
             self.set(K=K)
 
+
+    #============================= setByCARE =============================
+    #
+    # @brief  Determine feedback control matrix by solving the CARE.
+    #
+    # @param[in]  A       Estimated linear dynamics.
+    # @param[in]  B       Estimated input gain matrix.
+    # @param[in]  Q       Target stabilization matrix.
+    #
+    # @param[out] K       The gains computed.
+    # @param[out] P       The pos. def. symmetric (Lyapunov) matrix
+    # @param[out] Leig    The eigenvalues (closed-loop).
+    #
+    def setByCARE(self, A, B, Q):
+        [P, Leig, K] = care(A, B, Q)
+        K = -K
+        self.set(K)
+
+        return (K, P, Leig)
+
+
+    def setByCareFromStruct(self, cfs):
+        (K, P, Leig) = self.setByCARE(A=cfs.A, B=cfs.B, Q=cfs.Q)
+        return (K, P, Leig)
+
     def set(self, K):
         self.K = K
-
-    def systemDynamics(self, A, B):
-        def LinearCEOM(t, x, u):
-            return np.matmul(A,x) + np.matmul(B,u)
-
-        return LinearCEOM
 
 
     def regulator(self, xdes):
         if self.K.shape[1] == 2*xdes.size:
-            #TODO: Add zero velocities
-            pass
-            print("Needs to add zero velocities")
+            xdes = np.pad(xdes.flatten(), (0,xdes.size), mode='constant').reshape((self.K.shape[1],1))
+            print("Added zero velocities")
 
         def regLinControl(t=None, x=None):
             if x is None:
@@ -74,9 +92,8 @@ class linear(base):
 
     def regulatorConstrained(self, xdes, cons=None):
         if self.K.shape[1] == 2*xdes.size:
-            #TODO: Add zero velocities
-            pass
-            print("Needs to add zero velocities")
+            xdes = np.pad(xdes.flatten(), (0, xdes.size), mode='constant').reshape((self.K.shape[1], 1))
+            print("Added zero velocities")
 
         if cons is None:
             linLaw = self.regulator(xdes=xdes)
@@ -127,6 +144,13 @@ class linear(base):
 
         return linLaw
 
+
+    @staticmethod
+    def systemDynamics(A, B):
+        def LinearCEOM(t, x, u):
+            return np.matmul(A,x) + np.matmul(B,u)
+
+        return LinearCEOM
 
     @staticmethod
     def structBuilder(ceom, cfs):
