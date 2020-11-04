@@ -56,13 +56,70 @@ cSim = linQuadCopter(linDyn, tMaker, tTracker)
 
 #==[2] Simulate the control system.
 #
-simType = 'curve03'
+simType = 'curve3'
 
 desTraj = structure()
-if simType == 'track1':
+if simType == 'track1':     #Justin: This is probably of interest.
     v = 0.15
     # Linear growth in position, constant velocity
-    desTraj.x =  lambda t: v*np.array([])
+    desTraj.x = lambda t: v*np.vstack((t, t, 0.5*t,
+                                     np.zeros((3,t.size)),
+                                     repmat(np.array([[1],[1],[0.5]]),1,t.size),
+                                     np.zeros((3,t.size))))
+    desTraj.u = lambda t: np.zeros((4,t.size))  #No feed-forward.
+    desTraj.tspan = np.array([0,15])
+    desTraj.statedep = False
+    xi = np.zeros((12,1))
+
+elif simType == 'track2':
+    v = 0.15
+    # Linear growth in position, constant velocity
+    desTraj.x = lambda t: v*np.vstack((t, t, 0.5*t,
+                                     np.zeros((3,t.size)),
+                                     repmat(np.array([[1],[1],[0.5]]),1,t.size),
+                                     np.zeros((3,t.size))))
+    desTraj.u = lambda t: np.zeros((4,t.size))  #No feed-forward.
+    desTraj.tspan = np.array([0,15])
+    desTraj.statedep = False
+    xi = np.vstack((0.3, -0.1, 0,0,0,0, np.zeros((6,1)))) #Starts at wrong position.
+
+elif simType == 'sine01':
+    # Sinusoidal position and velocity
+    desTraj.x = lambda t: np.vstack((np.sin(t), np.sin(t), 1-np.cos(0.5*t),
+                                     np.zeros((3,t.size)),
+                                     np.cos(t), np.cos(t), 0.5*np.sin(0.5*t),
+                                     np.zeros((3,t.size))))
+    desTraj.u = lambda t: np.zeros((4,t.size))  #No feed-forward.
+    desTraj.tspan = np.array([0,25])
+    desTraj.statedep = False
+    xi = np.zeros((12,1))
+    xi[6] = 1
+    xi[7] = 1
+
+elif simType == 'curve01':
+    # Sinusoidal position and velocity
+    desTraj.x = lambda t: np.vstack((np.sin(t), 1-np.cos(t),
+                                     np.zeros((4,t.size)),
+                                     np.cos(t), np.sin(t),
+                                     np.zeros((4,t.size))))
+    desTraj.u = lambda t: np.zeros((4,t.size))  #No feed-forward.
+    desTraj.tspan = np.array([0,15])
+    desTraj.statedep = False
+    xi = np.zeros((12,1))
+    xi[6] = 1
+
+elif simType == 'curve02':  #Justin: This is probably of interest.
+    # Low freq. sinusoidal position and velocity so looks like an arc.
+    wa = 0.25
+    desTraj.x = lambda t: np.vstack((np.sin(wa*t), 1-np.cos(wa*t),
+                                     np.zeros((4,t.size)),
+                                    wa*np.cos(wa*t), wa*np.sin(wa*t),
+                                     np.zeros((4,t.size))))
+    desTraj.u = lambda t: np.zeros((4,t.size))  #No feed-forward.
+    desTraj.tspan = np.array([0,15])
+    desTraj.statedep = False
+    xi = np.zeros((12,1))
+    xi[6] = wa             # Assume already moving in right direction.
 
 elif simType == 'curve03':  #Justin: This is probably of interest.
     # Low freq. sinusoidal position and velocity so looks like an arc.
@@ -77,7 +134,7 @@ elif simType == 'curve03':  #Justin: This is probably of interest.
     desTraj.tspan = np.array([0,10])
     desTraj.statedep = False
     xi = np.zeros((12,1))
-    xi[7] = wa             # Assume already moving in right direction.
+    xi[6] = wa             # Assume already moving in right direction.
 
 initState = structure()
 initState.x = xi
