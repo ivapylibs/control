@@ -11,8 +11,14 @@ class linQuadCopter(controlSystem):
     def plotSignals(self, fn, desTraj):
         haveDes = desTraj is not None
 
-        sigArgs = {'-','LineWidth',2.5}
-        desArgs = {':','LineWidth',1.5}
+        sigArgs = {'linewidth':2.5}
+        desArgs = {'linewidth':1.5}
+
+        def sigPlot(t, x):
+            plt.plot(t, x, '-', **sigArgs)
+
+        def desPlot(t, x):
+            plt.plot(t, x, ':', **desArgs)
 
         #si = len(self.simOut)
 
@@ -21,15 +27,13 @@ class linQuadCopter(controlSystem):
         u = self.simOut[-1].u
 
         if (haveDes):
-            xDes = np.array(desTraj.x(t))
-            uDes = np.array(desTraj.u(t))
-            xDes = xDes.reshape((-1, len(xDes)))
-            uDes = uDes.reshape((-1, len(uDes)))
+            xDes = np.array(desTraj.x(t)).transpose().reshape((-1,t.size))
+            uDes = np.array(desTraj.u(t)).transpose().reshape((-1,t.size))
 
-        #fh = plt.figure(fn);
+        fh = plt.figure(fn)
         #clf
 
-        plt.plot(t, x[0:3,:].transpose())
+        sigPlot(t, x[0:3,:].transpose())
         if (False):
             #hold on;
             #plot(this.simOut(si).t, xDes([1:3],:), desArgs{:});
@@ -42,13 +46,10 @@ class linQuadCopter(controlSystem):
         fn = fn + 1
         fh = plt.figure(fn)
         #clf;
-        plt.plot(t, x[6:9,:].transpose())
-
-        fn = fn + 1
-        fh = plt.figure(fn)
+        sigPlot(t, x[6:9,:].transpose())
         if (haveDes):
             #hold on;
-            plt.plot(t, xDes[6:9,:].transpose())
+            desPlot(t, xDes[6:9,:].transpose())
             #hold off;
             pass
 
@@ -59,10 +60,10 @@ class linQuadCopter(controlSystem):
         fn = fn + 1
         fh = plt.figure(fn)
         #clf;
-        plt.plot(t, (180/np.pi)*x[3:6,:].transpose())
+        sigPlot(t, (180/np.pi)*x[3:6,:].transpose())
         if (haveDes):
             #hold on;
-            #plt.plot(t, (180/np.pi)*xDes[3:6,:].transpose())
+            desPlot(t, (180/np.pi)*xDes[3:6,:].transpose())
             #hold off;
             pass
 
@@ -72,19 +73,20 @@ class linQuadCopter(controlSystem):
         fn = fn + 1
         fh = plt.figure(fn)
         #clf;
-        plt.plot(t, (180/np.pi)*x[9:12,:].transpose())
+        sigPlot(t, (180/np.pi)*x[9:12,:].transpose())
         if (haveDes):
             #hold on;
-            #plt.plot(t, (180/np.pi)*xDes[9:12,:])
+            desPlot(t, (180/np.pi)*xDes[9:12,:].transpose())
             #hold off;
             pass
 
         #legend('$\dot R$','$\dot P$','$\dot Y$','interpreter','latex');
         #set(fh, 'Name', 'Quad-Copter Euler Angular Rates');
 
-        '''
+
         fn = fn + 1
-        fh = figure(fn)
+        fh = plt.figure(fn)
+        '''
         #clf
         plot3(x(1,:), this.simOut(si).x(2,:), this.simOut(si).x(3,:), sigArgs{:});
         hold on;
@@ -120,7 +122,6 @@ class linQuadCopter(controlSystem):
         #hold off;
         #legend('$u_1$','$u_2$','$u_3$','$u_4$','interpreter','latex');
         #set(fh, 'Name', 'Quad-Copter Control Signal');
-
 
         plt.show()
 
