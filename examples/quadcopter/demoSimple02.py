@@ -4,6 +4,7 @@ from trajSynth.naive import naive
 from controller.linear import linear
 from structures import structure
 import numpy as np
+from numpy.matlib import repmat
 
 #==[1] Setup the control system.
 #
@@ -25,7 +26,7 @@ Parms.g  = 9.80            #  m/s^2
 tsys = structure()
 tsys.A  = A
 tsys.B  = B
-tsys.Q  = (4e8)*np.diag([4, 4, 9, 4, 4, 1, 3, 3, 10, 7, 7, 3])
+tsys.Q  = (4e8)*np.diag([15, 15, 20, 0.1, 0.1, 0.05, 80, 80, 140, 0.3, 0.3, 0.1])
 #tsys.Q  = np.diag([200, 300, 400, 100, 10, 10, 20, 20, 10, 10, 10, 10])
 tsys.dt = 0.05
 tsys.solver = niODERK4
@@ -43,7 +44,7 @@ csys = structure()
 csys.dt = 0.05
 csys.odeMethod = niODERK4
 csys.controller = linear(np.zeros((12,1)),0*uEq)
-csys.Q  = (1e8)*np.diag([2, 2, 6, 4, 4, 1, 3, 3, 10, 9, 9, 3]) # Can be weaker than the tsys.Q
+csys.Q  = (1e8)*np.diag([8, 8, 14, 2, 2, 1, 15, 15, 20, 3, 3, 2]) # Can be weaker than the tsys.Q
 #csys.Q  = np.diag([200, 300, 400, 100, 10, 10, 20, 20, 10, 10, 10, 10])
 csys.controller.setByCARE(A, B, csys.Q)
 
@@ -55,32 +56,36 @@ cSim = linQuadCopter(linDyn, tMaker, tTracker)
 
 #==[2] Simulate the control system.
 #
-simType = 'reg2'
-if simType == 'regX':
-    xi = np.array([0, 0, 0, 0, 0, 0])
-    xf = np.array([1, 0, 0, 0, 0, 0])
-elif simType == 'regY':
-    xi = np.array([0, 0, 0, 0, 0, 0])
-    xf = np.array([0, 1, 0, 0, 0, 0])
-elif simType == 'regZ':
-    xi = np.array([0, 0, 0, 0, 0, 0])
-    xf = np.array([0, 0, 1, 0, 0, 0])
-elif simType =='reg1':
-    xi = np.array([0, 0, 0, 0, 0, 0])
-    xf = np.array([1, 1,0.5,0,0,0])
-elif simType =='reg2':
-    xi = np.array([1, -0.1, 0, 0, 0, 0])
-    xf = np.array([1.85, 1, 1.2, 0, 0, 0])
+simType = 'curve03'
+
+desTraj = structure()
+if simType == 'track1':
+    v = 0.15
+    # Linear growth in position, constant velocity
+    desTraj.x =  lambda t: v*np.array([])
+
+elif simType == 'curve03':  #Justin: This is probably of interest.
+    # Low freq. sinusoidal position and velocity so looks like an arc.
+    # Slow change in height.
+    wa = 0.25
+    vz = 0.05
+    desTraj.x = lambda t: np.vstack((np.sin(wa*t), 1-np.cos(wa*t), vz*t,
+                                     np.zeros((3,t.size)),
+                                    wa*np.cos(wa*t), wa*np.sin(wa*t), vz*np.ones((1, t.size)),
+                                     np.zeros((3,t.size))))
+    desTraj.u = lambda t: np.zeros((4,t.size))  #No feed-forward.
+    desTraj.tspan = np.array([0,10])
+    desTraj.statedep = False
+    xi = np.zeros((12,1))
+    xi[7] = wa             # Assume already moving in right direction.
 
 initState = structure()
 initState.x = xi
 cSim.setInitialState(initState)
-sol = cSim.goto(xf, 40)
+sol = cSim.follow(desTraj)
 
 #==[3] Plot outcomes.
 #
-desTraj = structure()
-desTraj.x = cSim.trajGen.xTraj
-desTraj.u = cSim.trajGen.uTraj
 
-cSim.plotSignals(1, desTraj)
+
+cSim.plotSignals(1, desTraj);

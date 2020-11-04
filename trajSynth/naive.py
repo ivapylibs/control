@@ -36,7 +36,7 @@ class naive(base):
         def ValMapper(f):
             def g(t):
                 try:
-                    outv = [f(x) for x in t]
+                    outv = np.hstack([f(x) for x in t])
                 except TypeError:
                     outv = f(t)
                 return outv

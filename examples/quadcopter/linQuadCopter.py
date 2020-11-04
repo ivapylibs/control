@@ -2,6 +2,7 @@ from controlSystem import controlSystem
 from controller.linear import linear
 import numpy as np
 import matplotlib.pyplot as plt
+from util import Timer
 
 class linQuadCopter(controlSystem):
 
@@ -12,7 +13,7 @@ class linQuadCopter(controlSystem):
         haveDes = desTraj is not None
 
         sigArgs = {'linewidth':2.5}
-        desArgs = {'linewidth':1.5}
+        desArgs = {'linewidth':4.5}
 
         def sigPlot(t, x):
             plt.plot(t, x, '-', **sigArgs)
@@ -27,16 +28,17 @@ class linQuadCopter(controlSystem):
         u = self.simOut[-1].u
 
         if (haveDes):
-            xDes = np.array(desTraj.x(t)).transpose().reshape((-1,t.size))
-            uDes = np.array(desTraj.u(t)).transpose().reshape((-1,t.size))
+            with Timer(name="get desired"):
+                xDes = np.array(desTraj.x(t))
+                uDes = np.array(desTraj.u(t))
 
         fh = plt.figure(fn)
         #clf
 
         sigPlot(t, x[0:3,:].transpose())
-        if (False):
+        if haveDes:
             #hold on;
-            #plot(this.simOut(si).t, xDes([1:3],:), desArgs{:});
+            desPlot(t, xDes[0:3,:].transpose())
             #hold off;
             pass
         #legend('$x$','$y$','$z$','interpreter','latex');
