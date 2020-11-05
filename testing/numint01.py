@@ -1,5 +1,5 @@
-from niODERK4 import niODERK4
-from util import Timer
+from ivacontrol.niODERK4 import niODERK4
+from ivacontrol.util import Timer
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 import numpy as np

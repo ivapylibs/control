@@ -1,4 +1,4 @@
-from util import Timer
+from ivacontrol.util import Timer
 import numpy as np
 
 class controlSystem(object):

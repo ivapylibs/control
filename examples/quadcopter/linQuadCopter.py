@@ -1,8 +1,8 @@
-from controlSystem import controlSystem
-from controller.linear import linear
+from ivacontrol.controlSystem import controlSystem
+from ivacontrol.controller.linear import linear
 import numpy as np
 import matplotlib.pyplot as plt
-from util import Timer
+from ivacontrol.util import Timer
 
 class linQuadCopter(controlSystem):
 

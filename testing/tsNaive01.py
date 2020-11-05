@@ -1,11 +1,11 @@
 import numpy as np
 import math
-from niODERK4 import niODERK4
-from controller.linear import linear, care
-from simController import simController
+from ivacontrol.niODERK4 import niODERK4
+from ivacontrol.controller.linear import linear, care
+from ivacontrol.simController import simController
 import matplotlib.pyplot as plt
-from trajSynth.naive import naive
-from structures import structure
+from ivacontrol.trajSynth.naive import naive
+from ivacontrol.structures import structure
 
 #==[1] Configure the linear system.
 sys = structure()

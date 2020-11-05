@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 
 import numpy as np
-from numIntegrator import numIntegrator
+from ivacontrol.numIntegrator import numIntegrator
 
 
 class niODERK4(numIntegrator):

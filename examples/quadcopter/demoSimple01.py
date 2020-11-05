@@ -1,8 +1,8 @@
 from examples.quadcopter.linQuadCopter import linQuadCopter
-from niODERK4 import niODERK4
-from trajSynth.naive import naive
-from controller.linear import linear
-from structures import structure
+from ivacontrol.niODERK4 import niODERK4
+from ivacontrol.trajSynth.naive import naive
+from ivacontrol.controller.linear import linear
+from ivacontrol.structures import structure
 import numpy as np
 
 #==[1] Setup the control system.

@@ -1,8 +1,8 @@
 import numpy as np
 import math
-from niODERK4 import niODERK4
-from controller.linear import linear, care
-from simController import simController
+from ivacontrol.niODERK4 import niODERK4
+from ivacontrol.controller.linear import linear, care
+from ivacontrol.simController import simController
 import matplotlib.pyplot as plt
 
 

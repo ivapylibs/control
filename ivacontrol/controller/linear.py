@@ -1,8 +1,8 @@
 from base import base
 import numpy as np
 import scipy.linalg
-from simController import simController
-from structures import structure
+from ivacontrol.simController import simController
+from ivacontrol.structures import structure
 
 def care(A, B, Q, R=None):
 

@@ -1,8 +1,8 @@
 # !/usr/bin/env python
 
 import numpy as np
-from controller.base import base
-from structures import structure
+from ivacontrol.controller.base import base
+from ivacontrol.structures import structure
 
 class simController(object):
 

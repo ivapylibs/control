@@ -1,8 +1,8 @@
 from examples.quadcopter.linQuadCopter import linQuadCopter
-from niODERK4 import niODERK4
-from trajSynth.naive import naive
-from controller.linear import linear
-from structures import structure
+from ivacontrol.niODERK4 import niODERK4
+from ivacontrol.trajSynth.naive import naive
+from ivacontrol.controller.linear import linear
+from ivacontrol.structures import structure
 import numpy as np
 from numpy.matlib import repmat
 
@@ -56,7 +56,7 @@ cSim = linQuadCopter(linDyn, tMaker, tTracker)
 
 #==[2] Simulate the control system.
 #
-simType = 'curve3'
+simType = 'curve03'
 
 desTraj = structure()
 if simType == 'track1':     #Justin: This is probably of interest.

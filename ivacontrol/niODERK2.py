@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 
 import numpy as np
-from numIntegrator import numIntegrator
+from ivacontrol.numIntegrator import numIntegrator
 
 class niODERK2(numIntegrator):
     coeffHeun =  np.array([1.0 , 1.0/2,  1.0/2])
