@@ -1,4 +1,4 @@
-from base import base
+from .base import base
 import numpy as np
 import scipy.linalg
 from simController import simController

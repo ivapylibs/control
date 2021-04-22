@@ -35,8 +35,8 @@ if __name__ == '__main__':
     a.c['e'] = 4
     a.k.l.m.x = 5
 
-    print a.b
-    print a.c.d
-    print a.temp
-    print a.c['e']
-    print a.k.l.m.x
+    print(a.b)
+    print(a.c.d)
+    print(a.temp)
+    print(a.c['e'])
+    print(a.k.l.m.x)

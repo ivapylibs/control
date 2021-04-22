@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import sys
 from niODERK4 import niODERK4
 from controller.linear import linear, care
 from simController import simController
@@ -52,10 +53,12 @@ sol = cSim.goto(np.array([0.3, 0]).reshape((2,1)))
 #==[3.1] Plot outcomes
 plt.figure(1)
 plt.plot(sol.t, sol.x.transpose())
+plt.title('Real trajectory starting at [3,0]')
 
 plt.figure(2)
 xv = np.array(sol.traj.x(sol.t))
 plt.plot(sol.t, sol.u[0,:], 'b', sol.t, xv.transpose(), 'g-.')
+plt.title("Control inputs and planned trajectory")
 
 
 #==[4] Run again from previous terminal point.
@@ -66,10 +69,11 @@ sol = cSim.goto(np.array([1.0, 0]).reshape((2,1)))
 #--[4.1] Plot outcomes.
 plt.figure(3)
 plt.plot(sol.t, sol.x.transpose())
+plt.title('Real trajectory starting at previous final point')
 
 plt.figure(4)
 xv = np.array(sol.traj.x(sol.t))
 plt.plot(sol.t, sol.u[0,:], 'b', sol.t, xv.transpose(),'g-.')
-
+plt.title("Control inputs and planned trajectory")
 
 plt.show()

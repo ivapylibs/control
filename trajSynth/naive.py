@@ -1,4 +1,4 @@
-from base import base
+from .base import base
 from simController import simController
 from controller.linear import linear
 import numpy as np
