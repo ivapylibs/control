@@ -118,10 +118,11 @@ class linear(base):
 
         return (linLaw, xdes)
 
-
-
-
-
+    def noControl(self):
+        def doNothing(t, x):
+            return (self.ueq, self.xeq)
+        self.compute = doNothing
+        return doNothing
 
 
 
