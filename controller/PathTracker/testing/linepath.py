@@ -12,6 +12,6 @@ class linepath(CurveBase):
         return np.outer(m,(t-self.tspan[0])) + self.xspan[:,0][:, None]
 
     # t0, t1 are scalars, x0, x1 are column vectors representing states
-    def generate(t0, x0, t1, x1):
+    def generate(self, t0, x0, t1, x1):
         self.tspan = [t0, t1]
         self.xspan = np.hstack((x0, x1))

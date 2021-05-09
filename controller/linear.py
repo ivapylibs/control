@@ -3,6 +3,7 @@ import numpy as np
 import scipy.linalg
 from simController import simController
 from structures import structure
+from Curves import CurveBase
 
 def care(A, B, Q, R=None):
 
@@ -119,7 +120,7 @@ class linear(base):
         return (linLaw, xdes)
 
     def noControl(self):
-        def doNothing(t, x):
+        def doNothing(t=None, x=None):
             return (self.ueq, self.xeq)
         self.compute = doNothing
         return doNothing
@@ -144,6 +145,23 @@ class linear(base):
         linLaw = trackLinControlWithFF
 
         return linLaw
+    
+    def trackerNew(self, desTraj):
+        def trackLinControl(t=None, x=None):
+            if(t is not None and x is not None):
+                rc = desTraj.x(t)
+                u = self.ueq +  np.matmul(self.K, x - rc)
+            else:
+                u = np.zeros(np.shape(self.K)[0], 1)
+                rc = np.zeros(np.shape(self.K)[1], 1)
+            return u, rc
+
+
+        if(isinstance(desTraj, CurveBase)):
+            self.compute = trackLinControl
+            return trackLinControl
+        
+
 
 
     @staticmethod

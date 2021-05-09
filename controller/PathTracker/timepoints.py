@@ -6,7 +6,6 @@ from structures import structure
 from enum import Enum
 from simController import simController
 
-
 class timepoints(base):
     class TimePointState(Enum):
         EMPTY    = 0
@@ -20,24 +19,25 @@ class timepoints(base):
         self.specs = specs
 
     def tracker(self, desTraj):
+        def pathTrackerTP(t=None, x=None):
+            if(t is not None and x is not None):
+                if (self.pState == self.TimePointState.GENERATE):
+                    self.nextLeg(t)
+                    #pdb.set_trace()
+                    self.control.trackerNew(self.path)
+                    self.pState = self.TimePointState.TRACK
+
+                if (t >= self.tNext):
+                    self.pState = self.TimePointState.GENERATE
+                # Always provide control.
+                return self.control.compute(t, x)
+            else:
+                return self.control.compute()
         self.desTraj = desTraj
         self.pState = self.TimePointState.GENERATE
 
         self.compute = pathTrackerTP
 
-        def pathTrackerTP(t=None, x=None):
-            if(t is not None and x is not None):
-                if (self.pState == self.TimePointState.GENERATE):
-                    self.nextLeg(t)
-                    self.control.trackerNew(self.path)
-                    self.pState = self.TimePointState.TRACK
-
-                if (t >= self.tNext):
-                    self.pState = self.GENERATE
-                # Always provide control.
-                return self.control.compute(t, x)
-            else:
-                return self.control.compute()
     
     def nextLeg(self, tc):
         tTerm = tc + self.specs.Th
@@ -53,21 +53,18 @@ class timepoints(base):
         #! Desired, current and terminal states
         xDesCurr = self.specs.vec2state(self.desTraj.x(tc))
         xDesTerm = self.specs.vec2state(self.desTraj.x(tTerm))
-        
+
+        #pdb.set_trace() 
         self.path.generate(tc, xDesCurr, tTerm, xDesTerm)
 
     @staticmethod
     def simBuilder(ceom, cfS):
-        solver = cfS.odeMethod(ceom, cfS.dt)
-
-        simInit.firstBuild = initialize
-        simInit.reconfig = reconfigure
-
         def initialize(istate, desTraj):
             cfS.controller.tracker(desTraj)
 
             theSim = simController(solver, cfS.controller)
             theSim.initializeByStruct(desTraj.tspan, istate)
+            return theSim
         
         def reconfigure(theSim, istate, desTraj):
             cfS.controller.tracker(desTraj)
@@ -75,3 +72,13 @@ class timepoints(base):
 
             theSim.reset()
             theSim.initializeByStruct(desTraj.tspan, istate)
+            return theSim
+
+        solver = cfS.odeMethod(ceom, cfS.dt)
+
+        simInit = structure()
+        simInit.firstBuild = initialize
+        simInit.reconfig = reconfigure
+
+        
+        return simInit
