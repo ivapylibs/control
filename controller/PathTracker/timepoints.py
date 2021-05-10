@@ -6,6 +6,8 @@ from structures import structure
 from enum import Enum
 from simController import simController
 
+import pdb
+
 class timepoints(base):
     class TimePointState(Enum):
         EMPTY    = 0
@@ -23,7 +25,6 @@ class timepoints(base):
             if(t is not None and x is not None):
                 if (self.pState == self.TimePointState.GENERATE):
                     self.nextLeg(t)
-                    #pdb.set_trace()
                     self.control.trackerNew(self.path)
                     self.pState = self.TimePointState.TRACK
 
