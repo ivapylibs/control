@@ -2,7 +2,6 @@ import numpy as np
 from controller.PathTracker.timepoints import timepoints
 from controller.linear import linear
 from Curves import Explicit, Bezier, Flight2D
-import linepath
 from matplotlib import pyplot as plt
 from structures import structure
 from niODERK4 import niODERK4
@@ -51,9 +50,9 @@ def parabola(t):
     #pdb.set_trace()
     return np.vstack((t, np.ones((1,tsize)), np.power(t, 2), 2*t))
 
-fCirc = parabola
+#fCirc = parabola
 
-#fCirc = lambda t: 20*np.array([[np.sin(t/2)], [(1/2)*np.cos(t/2)], [1-np.cos(t/2)], [(1/2)*np.sin(t/2)]])
+fCirc = lambda t: 20*np.array([[np.sin(t/2)], [(1/2)*np.cos(t/2)], [1-np.cos(t/2)], [(1/2)*np.sin(t/2)]])
 
 path = Explicit(fCirc, tspan=tspan)
 #pdb.set_trace()

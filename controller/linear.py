@@ -129,7 +129,14 @@ class linear(base):
 
 
     def tracker(self, xdes, uFF=None, stateDep=False):
-
+        def trackLinControl(t=None, x=None):
+            if(t is not None and x is not None):
+                rc = xdes
+                u = self.ueq +  np.matmul(self.K, x - rc)
+            else:
+                u = np.zeros(np.shape(self.K)[0], 1)
+                rc = np.zeros(np.shape(self.K)[1], 1)
+            return u, rc
         def trackLinControlWithFF(t=None, x=None):
             if t is None or x is None:
                 rc = np.zeros((self.K.shape[1],1))
@@ -140,9 +147,10 @@ class linear(base):
 
             return u, rc
 
-
-
-        linLaw = trackLinControlWithFF
+        if(uFF == None):
+            linLaw = trackLinControl
+        else:
+            linLaw = trackLinControlWithFF
 
         return linLaw
     
@@ -183,8 +191,12 @@ class linear(base):
             return theSim
 
         def theInitializerFromStruct(istate, theTraj):
-            if theTraj.statedep is None:
+            if(hasattr(theTraj, 'statedep')):
+                if theTraj.statedep is None:
+                    theTraj.statedep = False
+            else:
                 theTraj.statedep = False
+
 
             theSim = theInitializer(theTraj.tspan, istate, theTraj.x, theTraj.u, theTraj.statedep)
             return theSim

@@ -93,6 +93,29 @@ class controlSystem(object):
 
         return simsol
 
+    # WIP to track trajectories without using feed forward
+    # TODO: Test
+    def track(self, desTraj):
+        if (not self.iflag):
+            print('Error! Defined a terminal system state, but there is no initial state.')
+
+        if self.trackSim is None:
+            self.trackSim = self.trackBuilder.firstBuildFromStruct(self.istate, desTraj)
+        else:
+            self.trackBuilder.reconfigFromStruct(self.trackSim, self.istate, desTraj)
+
+        with Timer(name="Sim"):
+            simsol = self.trackSim.simulate()
+
+        simsol.traj = desTraj
+        simsol.istate = self.istate
+        simsol.fstate = self.trackSim.getState()
+
+        self.addSim(simsol)
+        self.iflag = False
+
+        return simsol
+
 
 
     def addSim(self, simOut):
