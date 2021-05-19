@@ -44,11 +44,11 @@ class linearSO(linear):
 
     def rectan(r, phi):
         return r*(np.cos(phi) + np.sin(phi) * 1j)
-    
-    def tracker(self, desTraj):
+
+    def tracker(self, xdes, uFF=None, stateDep=False):
         def trackLinControl(t=None, x=None):
             if(t is not None and x is not None):
-                rc = desTraj.x(t)
+                rc = xdes(t)
                 gDes = SE2(x=rc[0:2], R = SE2.rotationMatrix(rc[2]))
                 vDes = rc[3:6]
 
@@ -73,6 +73,37 @@ class linearSO(linear):
                 rc = np.zeros((np.shape(self.K)[1], 1))
             return u, rc
 
+        self.compute = trackLinControl
+        return trackLinControl
+    
+    def trackerNew(self, desTraj):
+        def trackLinControl(t=None, x=None):
+            if(t is not None and x is not None):
+                rc = desTraj.x(t)
+                gDes = SE2(x=rc[0:2], R = SE2.rotationMatrix(rc[2]))
+                vDes = rc[3:6]
+
+                gCur = SE2(x=x[0:2], R=SE2.rotationMatrix(x[2]))
+                vCur = x[3:6]
+
+                gCInv = gCur.inv()
+                gErr = gCInv*gDes
+
+                aErr = gErr.getAngle()
+                pErr = gErr.getTranslation()
+
+                if(self.inBodyFrame):
+                    xErr = np.vstack((pErr, aErr, vDes - gCInv * vCur))
+                else:
+                    xErr = np.vstack((pErr, aErr, gCInv*(vDes - vCur)))
+                u = self.ueq + np.matmul(self.K, xErr)
+                pdb.set_trace()
+
+            else:
+                u = np.zeros((np.shape(self.K)[0], 1))
+                rc = np.zeros((np.shape(self.K)[1], 1))
+            return u, rc
+
         if(isinstance(desTraj, CurveBase) or isinstance(desTraj, trajectory.Path)):
             self.compute = trackLinControl
             return trackLinControl
@@ -80,14 +111,14 @@ class linearSO(linear):
     @staticmethod
     def simBuilder(ceom, cfS):
         def initialize(istate, desTraj):
-            cfS.controller.tracker(desTraj)
+            cfS.controller.trackerNew(desTraj)
 
             theSim = simController(solver, cfS.controller)
             theSim.initializeByStruct(desTraj.tspan, istate)
             return theSim
         
         def reconfigure(theSim, istate, desTraj):
-            cfS.controller.tracker(desTraj)
+            cfS.controller.trackerNew(desTraj)
             theSim.controller = cfS.controller
 
             theSim.reset()

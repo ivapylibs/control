@@ -36,9 +36,13 @@ class linQuadCopter(controlSystem):
         #clf
 
         sigPlot(t, x[0:3,:].transpose())
+        plt.title("Position")
+        plt.legend(['x', 'y', 'z'])
         if haveDes:
+            print("Has Des")
             #hold on;
             desPlot(t, xDes[0:3,:].transpose())
+            plt.legend(['xDes', 'yDes', 'zDes'])
             #hold off;
             pass
         #legend('$x$','$y$','$z$','interpreter','latex');
@@ -49,9 +53,12 @@ class linQuadCopter(controlSystem):
         fh = plt.figure(fn)
         #clf;
         sigPlot(t, x[6:9,:].transpose())
+        plt.title("Velocity")
+        plt.legend(['$\dot{x}$', '$\dot{y}$', '$\dot{z}$'])
         if (haveDes):
             #hold on;
             desPlot(t, xDes[6:9,:].transpose())
+            plt.legend(['$\dot{x}_{des}$', '$\dot{y}_{des}$', '$\dot{z}_{des}$'])
             #hold off;
             pass
 
@@ -63,9 +70,12 @@ class linQuadCopter(controlSystem):
         fh = plt.figure(fn)
         #clf;
         sigPlot(t, (180/np.pi)*x[3:6,:].transpose())
+        plt.title("Euler Angles")
+        plt.legend(['R', 'P', 'Y'])
         if (haveDes):
             #hold on;
             desPlot(t, (180/np.pi)*xDes[3:6,:].transpose())
+            plt.legend(['$R_{des}$', '$P_{des}$', '$Y_{des}$'])
             #hold off;
             pass
 
@@ -76,9 +86,12 @@ class linQuadCopter(controlSystem):
         fh = plt.figure(fn)
         #clf;
         sigPlot(t, (180/np.pi)*x[9:12,:].transpose())
+        plt.title("Angular Rates")
+        plt.legend(['$\dot{R}$', '$\dot{P}$', '$\dot{Y}$'])
         if (haveDes):
             #hold on;
             desPlot(t, (180/np.pi)*xDes[9:12,:].transpose())
+            plt.legend(['$\dot{R}_{des}$', '$\dot{P}_{des}$', '$\dot{Y}_{des}$'])
             #hold off;
             pass
 
@@ -86,9 +99,9 @@ class linQuadCopter(controlSystem):
         #set(fh, 'Name', 'Quad-Copter Euler Angular Rates');
 
 
+        '''
         fn = fn + 1
         fh = plt.figure(fn)
-        '''
         #clf
         plot3(x(1,:), this.simOut(si).x(2,:), this.simOut(si).x(3,:), sigArgs{:});
         hold on;
@@ -109,10 +122,13 @@ class linQuadCopter(controlSystem):
         axis equal;
         set(fh, 'Name', 'Quad-Copter Parametric Plot');
         '''
+
         fn = fn + 1
         fh = plt.figure(fn)
         #clf;
         plt.plot(t,u.transpose())
+        plt.title("Inputs")
+        plt.legend(['$u_1$', '$u_2$', '$u_3$', '$u_4$'])
         if (haveDes):
             #hold on;
             plt.plot(t, uDes.transpose())
