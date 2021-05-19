@@ -65,8 +65,8 @@ class linearSO(linear):
                     xErr = np.vstack((pErr, aErr, vDes - gCInv * vCur))
                 else:
                     xErr = np.vstack((pErr, aErr, gCInv*(vDes - vCur)))
-                #pdb.set_trace()
                 u = self.ueq + np.matmul(self.K, xErr)
+                #pdb.set_trace()
 
             else:
                 u = np.zeros((np.shape(self.K)[0], 1))
