@@ -25,19 +25,19 @@ class DiffDriveFO(FromSpecFO):
             if(self.specs.angType == 'linear'):
                 theta = self.specs.wLim * self.specs.dt/2
                 (rad, thetalim)  = self.limRadius(self.specs.vLim,self.specs.wLim)
-                self.rad2ang = RegularGridInterpolator(points = (rad,), values=theta, bounds_error=False)
+                self.rad2ang = RegularGridInterpolator(points = (rad,), values=theta, bounds_error=False, fill_value=None)
 
             elif(self.specs.angType == 'interp'):
                 wGrid = np.linspace(self.specs.wLim[0],self.specs.wLim[1],30)
                 vGrid = np.linspace(self.specs.vLim[0],self.specs.vLim[1],30)
                 (rv, av) = self.limRadius(vGrid, wGrid)
-                self.rad2ang = RegularGridInterpolator(points=(rv,), values=av, bounds_error=False)
+                self.rad2ang = RegularGridInterpolator(points=(rv,), values=av, bounds_error=False, fill_value=None)
 
             elif(self.specs.angType == 'GForce'):
                 vGrid = np.linspace(self.specs.vLim[0],self.specs.vLim[1],30)
-                wGrid = np.divide(self.specs.Gmax, vGrid)
+                wGrid = self.specs.Gmax/vGrid
                 (rv, av) = self.limRadius(vGrid, wGrid)
-                self.rad2ang = RegularGridInterpolator(points=(rv,), values=av, bounds_error=False)
+                self.rad2ang = RegularGridInterpolator(points=(rv,), values=av, bounds_error=False, fill_value=None)
   
                 self.specs.wLim = self.specs.Gmax/self.specs.vLim
         
@@ -84,6 +84,7 @@ class DiffDriveFO(FromSpecFO):
             idx2 = idx1[np.where(t2 == True)[0]]
             if(len(idx2) > 0):
                 aLim = self.angLimit(r[idx2])
+                #pdb.set_trace()
                 canReach[idx2] = apos[idx2] <= aLim
         print(canReach)
         return canReach

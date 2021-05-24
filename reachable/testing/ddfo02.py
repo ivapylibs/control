@@ -10,7 +10,8 @@ specs = structure()
 specs.dt   = 3
 specs.vLim = np.array([5, 7])
 specs.wLim = np.array([np.pi/5 , np.pi/10])
-specs.angType = 'interp'
+specs.Gmax = 3.5
+specs.angType = 'GForce'
 
 
 rs = DiffDriveFO(specs)
