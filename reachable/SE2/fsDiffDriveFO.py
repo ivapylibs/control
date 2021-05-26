@@ -12,13 +12,13 @@ class DiffDriveFO(FromSpecFO):
 
     def setLimitsFromAcceleration(self, v0, aLims):
         if(np.isscalar(self.specs.dt)):
-            self.specs.vLim = np.max(v0 + 0.5*aLims*self.specs.dt, 0)
+            self.specs.vLim = np.max(np.hstack((v0 + 0.5*aLims*self.specs.dt, np.zeros((2,1)))), axis=1)
         else:
-            self.specs.vLim = np.max(v0 + 0.5*aLims*self.specs.dt[1], 0)
+            self.specs.vLim = np.max(np.hstack((v0 + 0.5*aLims*self.specs.dt[1], np.zeros((2,1)))), axis=1)
 
         if('vBounds' in self.specs):
-            self.specs.vLim[0] = np.max(self.specs.vLim[0], self.specs.vBounds[0])
-            self.specs.vLim[1] = np.min(self.specs.vLim[1], self.specs.vBounds[1])
+            self.specs.vLim[0] = np.max(np.hstack((self.specs.vLim[0], self.specs.vBounds[0])))
+            self.specs.vLim[1] = np.min(np.hstack((self.specs.vLim[1], self.specs.vBounds[1])))
     
     def compute(self):
         if(np.isscalar(self.specs.dt)):
@@ -68,9 +68,9 @@ class DiffDriveFO(FromSpecFO):
         return np.max(dvals)
     
     def isReachablePoint(self, p):
-        r = np.linalg.norm(p,2,1)
-        a = np.arctan2(p[:,1], p[:,0])
-        canReach = np.zeros((np.shape(p)[0],), dtype=bool)
+        r = np.linalg.norm(p,2,0)
+        a = np.arctan2(p[1,:], p[0,:])
+        canReach = np.zeros((np.shape(p)[1],), dtype=bool)
 
         t1 = self.testThetaLimits(a)
         idx1 = np.where(t1 == True)[0]

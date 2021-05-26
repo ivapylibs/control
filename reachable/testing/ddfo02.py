@@ -18,7 +18,7 @@ rs = DiffDriveFO(specs)
 
 rs.compute()
 
-dg = structure
+dg = structure()
 dg.r     = 0.2
 dg.theta = 0.05
 rs.plotBoundary(dg)

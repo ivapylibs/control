@@ -30,10 +30,10 @@ pMax = np.amax(theBdy,axis=1)
 ng = 40
 [xx,yy] = np.meshgrid(np.linspace(pMin[0],pMax[0],ng), np.linspace(pMin[1],pMax[1],ng))
 
-tPts = np.transpose(np.vstack((xx.T.ravel(), yy.T.ravel())))
+tPts = np.vstack((xx.T.ravel(), yy.T.ravel()))
 isReach = np.squeeze(rs.isReachablePoint(tPts))
 
-plt.plot(tPts[np.where(isReach==True), 0], tPts[np.where(isReach==True), 1],'g.')
-plt.plot(tPts[np.where(isReach==False), 0], tPts[np.where(isReach==False), 1],'r.')
+plt.plot(tPts[0, np.where(isReach==True)], tPts[1, np.where(isReach==True)],'g.')
+plt.plot(tPts[0, np.where(isReach==False)], tPts[1, np.where(isReach==False)],'r.')
 
 plt.show()
