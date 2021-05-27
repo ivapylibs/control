@@ -29,7 +29,7 @@ sys.path.append('../../')
 import do_mpc
 
 
-def template_simulator(model):
+def template_simulator(model,curTime):
     """
     --------------------------------------------------------------------------
     template_simulator: tuning parameters
@@ -50,9 +50,10 @@ def template_simulator(model):
 
     # Define the function (indexing is much simpler ...)
     def tvp_fun(t_now):
-            tvp_template['mytime'] = 1-cos(1/2*t_now)
-            tvp_template['mytime2'] = sin(1/2*t_now)
-            return tvp_template
+        t_now = t_now + curTime
+        tvp_template['mytime'] = 1-cos(1/2*t_now)
+        tvp_template['mytime2'] = sin(1/2*t_now)
+        return tvp_template
 
     # Set the tvp_fun:
     simulator.set_tvp_fun(tvp_fun)
