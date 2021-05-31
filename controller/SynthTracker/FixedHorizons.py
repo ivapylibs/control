@@ -17,9 +17,11 @@ class fixedHorizons(base):
         self.control = uLaw
         self.specs = specs
         self.tState = None
+        self.tNext = specs.Td
 
-        this.uc = this.control.compute
-        this.compute = this.control.compute
+        self.uc = self.control.compute
+        self.compute = self.control.compute
+        self.myt = 0;
 
         def vec2state(x):
             return x
@@ -39,17 +41,20 @@ class fixedHorizons(base):
         def pathTrackerTP(t=None,x=None):
             myarr = [0,0]
             if t is not None and x is not None:
+                self.myt += .01
                 if self.tState == self.fixedHorizonsState.SYNTHESIZE:
+                    self.myt = 0;
                     self.nextHorizon(t,x)
-                    self.control.trackerNew(self.synTraj)
+                    self.control.trackerPath(self.synTraj)
                     self.tState = self.fixedHorizonsState.TRACK
 
-                myarr = self.control.compute(t,x)
-                self.uc = u
-                if t>=self.tNext:
-                    this.tState = this.fixedHorizonsState.SYNTHESIZE
+                myarr = self.control.compute(self.myt,x)
+                self.uc = myarr[1]
+                if t>=(self.tNext-self.specs.Ts):
+                    self.tState = self.fixedHorizonsState.SYNTHESIZE
             else:
-                myarr = this.control.compute()
+                myarr = self.control.compute()
+            return myarr
         self.desTraj = desTraj
         self.tState = self.fixedHorizonsState.SYNTHESIZE
         self.compute = pathTrackerTP
@@ -62,16 +67,16 @@ class fixedHorizons(base):
         if tNext > self.desTraj.tspan[-1]:
             tNext = self.desTraj.tspan[-1]
         pathSeg = self.desTraj.segment([tc,tTerm])
-        istate.x = self.specs.state2state(xc)
-        istate.u = self.uc
-        this.synTraj = this.synthesizer.followPath(istate,pathSeg)
+        istate = structure()
+        istate = self.specs.state2state(xc)
+        self.synTraj = self.synthesizer.followPath(istate,pathSeg.x)
 
     @staticmethod
     def simBuilder(ceom, cfS):
         def initialize(istate, desTraj):
             cfS.controller.tracker(desTraj)
 
-            theSim = simController(solver, cfS.controller)
+            theSim = simController(solver, cfS.controller.compute)
             theSim.initializeByStruct(desTraj.tspan, istate)
             return theSim
 

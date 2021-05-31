@@ -1,12 +1,12 @@
 #trajectory synth.MPC
 #uses NLMPC from do-MPC in order to synthesize forward time trajectories and control signals
-from base import base
+from trajSynth.base import base
 from structures import structure
 import numpy as np
 import do_mpc
-from Models.DiffDrive.template_model import template_model
-from Models.DiffDrive.template_mpc import template_mpc
-from Models.DiffDrive.template_simulator import template_simulator
+from trajSynth.Models.DiffDrive.template_model import template_model
+from trajSynth.Models.DiffDrive.template_mpc import template_mpc
+from trajSynth.Models.DiffDrive.template_simulator import template_simulator
 
 
 class mpcDiff(base):

@@ -2,10 +2,11 @@ import numpy as np
 from controller.SynthTracker.FixedHorizons import fixedHorizons
 from controller.linear import linear
 from Curves import Explicit
-from trajSynth.mpcDiff import mpcDiff
+from trajSynth.mpcTrivial import mpcTrivial
 from matplotlib import pyplot as plt
 from structures import structure
 from niODERK4 import niODERK4
+import trajectory.Path
 
 
 A = np.zeros((2,2))
@@ -18,23 +19,28 @@ linctrl.noControl()
 
 leom = linear.systemDynamics(A, B)
 
+tspan = [0,10]
+fCirc = lambda t: np.array([[np.sin(t/2)] , [1-np.cos(t/2)]])
+path = Explicit(fCirc, tspan=tspan)
+desTraj = trajectory.Path(path, tspan)
+
 #define MPC paramaters
 parms = structure()
 parms.Ts = .01
 parms.x0 = np.array([[0],[0]])
-parms.Td = .02
+parms.Td = .5
 tSynth = mpcTrivial(parms)
 
 ts = structure()
 ts.Th = 0.5
 ts.Td = 0.2
+ts.Ts = .01
 
-cfS = structure(dt=0.05, odeMethod=niODERK4, controller=SynthTracker(tSynth, linctrl, ts))
+tSynth.updatefPtr(desTraj.x)
+#linctrl.trackerPath(desTraj)
+cfS = structure(dt=0.01, odeMethod=niODERK4, controller=fixedHorizons(tSynth, linctrl, ts))
 
-tspan = [0,10]
-fCirc = lambda t: np.array([[np.sin(t/2)] , [1-np.cos(t/2)]])
-path = Explicit(fCirc, tspan=tspan)
-desTraj = trajectory.Path(path, tspan)
+
 
 sm = cfS.controller.simBuilder(leom, cfS)
 

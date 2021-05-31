@@ -153,7 +153,7 @@ class linear(base):
             linLaw = trackLinControlWithFF
 
         return linLaw
-    
+
     def trackerNew(self, desTraj):
         def trackLinControl(t=None, x=None):
             if(t is not None and x is not None):
@@ -168,8 +168,30 @@ class linear(base):
         if(isinstance(desTraj, CurveBase)):
             self.compute = trackLinControl
             return trackLinControl
-        
 
+    def transpose(self,vec):
+        myvec = np.zeros((len(vec),1))
+        for i in range(len(vec)):
+            myvec[i,0] = vec[i]
+        return myvec
+
+
+    def trackerPath(self,desTraj):
+        def trackLinControl(t=None, x=None):
+            if(t is not None and x is not None):
+                myt = int(t/.01)
+                rc = self.transpose(desTraj[myt])
+                u = self.ueq +  np.matmul(self.K, x - rc)
+            else:
+                print(self.K)
+                u = np.zeros((np.shape(self.K)[0], 1))
+                rc = np.zeros((np.shape(self.K)[1], 1))
+            return u, rc
+
+
+
+        self.compute = trackLinControl
+        return trackLinControl
 
 
     @staticmethod
