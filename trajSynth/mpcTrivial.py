@@ -7,7 +7,7 @@ import do_mpc
 from trajSynth.Models.Trivial.template_model import template_model
 from trajSynth.Models.Trivial.template_mpc import template_mpc
 from trajSynth.Models.Trivial.template_simulator import template_simulator
-
+from matplotlib import pyplot as plt
 
 class mpcTrivial(base):
 
@@ -24,6 +24,8 @@ class mpcTrivial(base):
         self.fPtr = desTraj
 
     def mainloop(self,x0,desTraj):
+        #print(x0)
+        #input("Press Enter to continue...")
         self.updatefPtr(desTraj)
         self.mpc = template_mpc(self.model,self.fPtr,self.curTime)
         self.sim = template_simulator(self.model,self.curTime)
@@ -51,6 +53,11 @@ class mpcTrivial(base):
         """
         Run MPC main loop:
         """
-        for k in range(1):
-            self.mainloop(x0,desTraj)
+        self.mainloop(x0,desTraj)
+        #val = self.mpc.data['_x']
+        #plt.plot(val[:,0],val[:,1])
+        #plt.show()
+        #print(x0)
+        #print(self.mpc.data['_x'])
+        #input("Press Enter to continue...")
         return self.mpc.data['_x']

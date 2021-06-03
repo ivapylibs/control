@@ -49,8 +49,8 @@ def template_model():
     inp1 = model.set_variable('_u',  'inp1') # Accl
     inp2 = model.set_variable('_u',  'inp2') # Omega
 
-    mytime = model.set_variable(var_type = '_tvp', var_name = 'mytime') #time parameters
-    mytime2 = model.set_variable(var_type = '_tvp', var_name = 'mytime2')
+    mytime = model.set_variable(var_type = '_tvp', var_name = 'xDes') #time parameters
+    mytime2 = model.set_variable(var_type = '_tvp', var_name = 'yDes')
     # Differential equations
     model.set_rhs('X_s', inp1*np.cos(T_s))
     model.set_rhs('Y_s', inp1*np.sin(T_s))

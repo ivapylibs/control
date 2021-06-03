@@ -180,10 +180,13 @@ class linear(base):
         def trackLinControl(t=None, x=None):
             if(t is not None and x is not None):
                 myt = int(t/.01)
+                #print(myt)
+                #input("Press Enter")
                 rc = self.transpose(desTraj[myt])
-                u = self.ueq +  np.matmul(self.K, x - rc)
+                u = self.ueq +  np.matmul(self.K, x-rc)
+                #print(u)
+                #input("Press Enter")
             else:
-                print(self.K)
                 u = np.zeros((np.shape(self.K)[0], 1))
                 rc = np.zeros((np.shape(self.K)[1], 1))
             return u, rc

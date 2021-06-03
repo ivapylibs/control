@@ -19,7 +19,7 @@ linctrl.noControl()
 
 leom = linear.systemDynamics(A, B)
 
-tspan = [0,10]
+tspan = [0,6]
 fCirc = lambda t: np.array([[np.sin(t/2)] , [1-np.cos(t/2)]])
 path = Explicit(fCirc, tspan=tspan)
 desTraj = trajectory.Path(path, tspan)
@@ -28,12 +28,12 @@ desTraj = trajectory.Path(path, tspan)
 parms = structure()
 parms.Ts = .01
 parms.x0 = np.array([[0],[0]])
-parms.Td = .5
+parms.Td = 5
 tSynth = mpcTrivial(parms)
 
 ts = structure()
-ts.Th = 0.5
-ts.Td = 0.2
+ts.Th = 5
+ts.Td = 5
 ts.Ts = .01
 
 tSynth.updatefPtr(desTraj.x)

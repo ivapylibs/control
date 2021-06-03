@@ -18,7 +18,7 @@ class mpcDiff(base):
         self.Td = param.Td #number of iterations before MPC recomputes
         self.curTime = 0 #the current time in the simulation, used to ensure the correct position on the path is being pulled
         self.Ts = param.Ts
-        self.estimator = do_mpc.estimator.StateFeedback(model)
+        self.estimator = do_mpc.estimator.StateFeedback(self.model)
 
     def updatefPtr(self,desTraj):
         self.fPtr = desTraj
@@ -53,4 +53,7 @@ class mpcDiff(base):
         """
         for k in range(1):
             self.mainloop(x0,desTraj)
+        #print(x0)
+        #print(self.mpc.data['_x'])
+        #input("press Enter")
         return self.mpc.data['_x']

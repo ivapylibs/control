@@ -3,6 +3,7 @@ from controller.base import base
 from simController import simController
 from structures import structure
 from enum import Enum
+from matplotlib import pyplot as plt
 
 import pdb
 
@@ -42,15 +43,17 @@ class fixedHorizons(base):
             myarr = [0,0]
             if t is not None and x is not None:
                 self.myt += .01
+                #print(self.tState)
                 if self.tState == self.fixedHorizonsState.SYNTHESIZE:
                     self.myt = 0;
                     self.nextHorizon(t,x)
                     self.control.trackerPath(self.synTraj)
                     self.tState = self.fixedHorizonsState.TRACK
 
+
                 myarr = self.control.compute(self.myt,x)
                 self.uc = myarr[1]
-                if t>=(self.tNext-self.specs.Ts):
+                if self.myt>=(self.tNext-self.specs.Ts):
                     self.tState = self.fixedHorizonsState.SYNTHESIZE
             else:
                 myarr = self.control.compute()
@@ -67,9 +70,23 @@ class fixedHorizons(base):
         if tNext > self.desTraj.tspan[-1]:
             tNext = self.desTraj.tspan[-1]
         pathSeg = self.desTraj.segment([tc,tTerm])
+        myarr = np.arange(tc,tTerm,.01).tolist()
+        finalx = []
+        finaly = []
+        for i in range(len(myarr)):
+            finalx.append(pathSeg.x(myarr[i])[0])
+            finaly.append(pathSeg.x(myarr[i])[1])
+
+        #print(finalx)
+        #plt.plot(finalx[:],finaly[:], 'b')
         istate = structure()
         istate = self.specs.state2state(xc)
+        #print(xc)
+        #print(istate)
+
         self.synTraj = self.synthesizer.followPath(istate,pathSeg.x)
+        #print(istate)
+        plt.plot(self.synTraj[:,0],self.synTraj[:,1],'b')
 
     @staticmethod
     def simBuilder(ceom, cfS):

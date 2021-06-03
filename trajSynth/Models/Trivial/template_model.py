@@ -26,8 +26,8 @@ def template_model():
     inp1 = model.set_variable('_u',  'inp1') # Xdot
     inp2 = model.set_variable('_u',  'inp2') # Ydot
 
-    mytime = model.set_variable(var_type = '_tvp', var_name = 'mytime') #time parameters
-    mytime2 = model.set_variable(var_type = '_tvp', var_name = 'mytime2')
+    mytime = model.set_variable(var_type = '_tvp', var_name = 'xDes') #time parameters
+    mytime2 = model.set_variable(var_type = '_tvp', var_name = 'yDes')
     # Differential equations
     model.set_rhs('X_s', inp1)
     model.set_rhs('Y_s', inp2)

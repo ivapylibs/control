@@ -28,9 +28,9 @@ def template_simulator(model,curTime):
 
     # Define the function (indexing is much simpler ...)
     def tvp_fun(t_now):
-        t_now = t_now + curTime
-        tvp_template['mytime'] = t_now
-        tvp_template['mytime2'] = t_now
+        t_now = t_now
+        tvp_template['xDes'] = t_now
+        tvp_template['yDes'] = t_now
         return tvp_template
 
     # Set the tvp_fun:

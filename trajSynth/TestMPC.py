@@ -39,7 +39,7 @@ Setup graphic:
 """
 def desTraj(t):
     myarr =[0,0]
-    myarr[0] = 1-np.cos(1/2*t)
+    myarr[0] = 1-cos(1/2*t)
     myarr[1] = sin(1/2*t)
     return myarr
 #fig, ax, graphics = do_mpc.graphics.default_plot(mpc.data, figsize=(8,5))
@@ -51,13 +51,13 @@ param.x0 = x0
 param.Td = 1
 param.Ts = Ts
 #define MPC objects
-myMPC = mpcDiff(model,param)
+myMPC = mpcDiff(param)
 
 #graphics.default_plot(states_list =['X_s','Y_s'])
 #this is basically a test of MPC fixed Horizons just in an unclean way
 fig, ax = plt.subplots()
 ax.set_prop_cycle(color =['red', 'black', 'yellow'])
-for i in range(20):
+for i in range(10):
     myX = myMPC.followPath(x0,desTraj)
     x0 = myX[-1,:]
     plt.plot(myMPC.mpc.data['_x'][:,0],myMPC.mpc.data['_x'][:,1])

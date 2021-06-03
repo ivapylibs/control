@@ -53,8 +53,8 @@ def template_mpc(model,fptr,curTime):
     n_horizon = 20;
     mpc.set_param(**setup_mpc)
 
-    mterm = (model.x['X_s']-model.tvp['mytime'])**2 + (model.x['Y_s']-model.tvp['mytime2'])**2 # terminal cost
-    lterm = (model.x['X_s']-model.tvp['mytime'])**2 + (model.x['Y_s']-model.tvp['mytime2'])**2 # Legrangian
+    mterm = (model.x['Y_s']-model.tvp['xDes'])**2 + (model.x['X_s']-model.tvp['yDes'])**2 # terminal cost
+    lterm = (model.x['Y_s']-model.tvp['xDes'])**6 + (model.x['X_s']-model.tvp['yDes'])**6 # Legrangian
     # stage cost
 
     mpc.set_objective(mterm=mterm, lterm=lterm)
@@ -73,10 +73,14 @@ def template_mpc(model,fptr,curTime):
 
     def tvp_fun(t_now):
         t_now = t_now + curTime
+        myarray = fptr(t_now)
+        #print(myarray[0])
+        #print(myarray[1])
+        #input("Enter")
         for k in range(n_horizon+1):
-            myarray = fptr(t_now)
-            tvp_template['_tvp',k,'mytime'] = myarray[0]
-            tvp_template['_tvp',k,'mytime2'] = myarray[1]
+
+            tvp_template['_tvp',k,'xDes'] = myarray[0]
+            tvp_template['_tvp',k,'yDes'] = myarray[1]
         return tvp_template
 
     mpc.set_tvp_fun(tvp_fun)
