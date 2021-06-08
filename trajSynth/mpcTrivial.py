@@ -60,4 +60,7 @@ class mpcTrivial(base):
         #print(x0)
         #print(self.mpc.data['_x'])
         #input("Press Enter to continue...")
-        return self.mpc.data['_x']
+        myarry = np.concatenate((self.mpc.data['_x'],self.mpc.data['_u']),axis=1)
+        #print(myarry)
+        #input("pressenter")
+        return myarry

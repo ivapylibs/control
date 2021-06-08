@@ -22,6 +22,7 @@ class simController(object):
             (u0, rc) = self.cLaw.compute()
         else:
             (u0, rc) = self.cLaw()
+        print(u0)
         self.u = np.zeros((u0.shape[0], self.solver.t.size))
 
     def initializeByStruct(self, tspan, istate):

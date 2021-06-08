@@ -20,7 +20,7 @@ class linearSO(linear):
         (K, P, Leig)= super().setByCARE(A, B, Q)
         self.K = -K
         return (K, P, Leig)
-    
+
     def set(self, K):
         self.K = K
         return K
@@ -28,7 +28,7 @@ class linearSO(linear):
     def setByCareFromStruct(self, cfs):
         (K, P, Leig) = self.setByCARE(A=cfs.A, B=cfs.B, Q=cfs.Q)
         return (K, P, Leig)
-    
+
     def stabilizer(self):
         def stabLinControl(t=None, x=None):
             if x is None:
@@ -38,9 +38,15 @@ class linearSO(linear):
 
             rc = self.xeq
             return (u, rc)
-        
+
         self.control = stabLinControl
         return stabLinControl
+
+    def noControl(self):
+        def doNothing(t=None, x=None):
+            return (self.ueq, self.xeq)
+        self.compute = doNothing
+        return doNothing
 
     def rectan(r, phi):
         return r*(np.cos(phi) + np.sin(phi) * 1j)
@@ -74,8 +80,84 @@ class linearSO(linear):
             return u, rc
 
         self.compute = trackLinControl
+
+    def trackerPath(self, xdes, uFF=None, stateDep=False):
+        def trackLinControl(t=None, x=None):
+            if(t is not None and x is not None):
+                myt = int(t/.01)
+                #print(myt)
+                rc = xdes[myt]
+                #print(rc)
+                #input()
+                #print(np.shape(rc))
+                rc = np.array(rc)[np.newaxis]
+                rc = rc.T
+                #print(rc)
+                #input("enter")
+                gDes = SE2(x=rc[0:2], R = SE2.rotationMatrix(rc[2]))
+                temp = np.array([rc[3],0])[np.newaxis]
+                temp = temp.T
+
+                vDes = np.concatenate((temp,[rc[4]]))
+                #print(gDes)
+                #print(vDes)
+                #input('enter')
+
+                gCur = SE2(x=x[0:2], R=SE2.rotationMatrix(x[2]))
+                vCur = x[3:6]
+                #print(self.xeq)
+                #print(vCur)
+                #input("enter")
+                gCInv = gCur.inv()
+                gErr = gCInv*gDes
+
+                aErr = gErr.getAngle()
+                pErr = gErr.getTranslation()
+
+                if(self.inBodyFrame):
+                    xErr = np.vstack((pErr, aErr))
+                else:
+                    xErr = np.vstack((pErr, aErr))
+                u = self.ueq + np.matmul(self.K, xErr) + rc[2:4]
+                #pdb.set_trace()
+
+            else:
+                u = np.zeros((np.shape(self.K)[0], 1))
+                rc = np.zeros((np.shape(self.K)[1], 1))
+            return u, rc
+        self.compute = trackLinControl
+
+    def trackLinControltrackLinControl(t=None, x=None):
+        def trackLinControl(t=None, x=None):
+            if(t is not None and x is not None):
+                rc = xdes(t)
+                gDes = SE2(x=rc[0:2], R = SE2.rotationMatrix(rc[2]))
+                vDes = rc[3:6]
+
+                gCur = SE2(x=x[0:2], R=SE2.rotationMatrix(x[2]))
+                vCur = x[3:6]
+
+                gCInv = gCur.inv()
+                gErr = gCInv*gDes
+
+                aErr = gErr.getAngle()
+                pErr = gErr.getTranslation()
+
+                if(self.inBodyFrame):
+                    xErr = np.vstack((pErr, aErr, vDes - gCInv * vCur))
+                else:
+                    xErr = np.vstack((pErr, aErr, gCInv*(vDes - vCur)))
+                u = self.ueq + np.matmul(self.K, xErr)
+                #pdb.set_trace()
+
+            else:
+                u = np.zeros((np.shape(self.K)[0], 1))
+                rc = np.zeros((np.shape(self.K)[1], 1))
+            return u, rc
+
+        self.compute = trackLinControl
         return trackLinControl
-    
+
     def trackerNew(self, desTraj):
         def trackLinControl(t=None, x=None):
             if(t is not None and x is not None):
@@ -116,7 +198,7 @@ class linearSO(linear):
             theSim = simController(solver, cfS.controller)
             theSim.initializeByStruct(desTraj.tspan, istate)
             return theSim
-        
+
         def reconfigure(theSim, istate, desTraj):
             cfS.controller.trackerNew(desTraj)
             theSim.controller = cfS.controller
@@ -132,5 +214,3 @@ class linearSO(linear):
         simInit.reconfig = reconfigure
 
         return simInit
-
-

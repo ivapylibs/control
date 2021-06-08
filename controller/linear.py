@@ -183,7 +183,12 @@ class linear(base):
                 #print(myt)
                 #input("Press Enter")
                 rc = self.transpose(desTraj[myt])
-                u = self.ueq +  np.matmul(self.K, x-rc)
+                uff = rc[2:4]
+                rc = rc[0:2]
+
+                #print(uff)
+                #u = uff
+                u = self.ueq +  np.matmul(self.K, x-rc) + uff
                 #print(u)
                 #input("Press Enter")
             else:
