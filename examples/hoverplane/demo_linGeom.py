@@ -1,10 +1,12 @@
 from examples.hoverplane.hoverplane import hoverplane
-from controller.SE2.linearSO import linearSO
+from controller.TSE2.linear import linear as linearSO
 from controller.linear import linear
 from structures import structure
 import numpy as np
 from niODERK4 import niODERK4
 from trajSynth.naive import naive
+
+import pdb
 
 parms = structure()
 parms.linD = 0*np.array([0.01, 0.023])
@@ -34,6 +36,7 @@ csys = structure()
 csys.dt = 0.01
 csys.odeMethod  = niODERK4
 csys.controller = linearSO(np.array([0,0,0,nuEq,0,0]).reshape((6,1)),uEq)
+#pdb.set_trace()
 
 manual = True
 if(manual):

@@ -215,7 +215,6 @@ class linear(base):
 
         def theInitializer(tspan, istate, rsig, uFF, statedep=False):
             control = cfs.controller.tracker(rsig, uFF, statedep)
-
             theSim = simController(solver, control)
             theSim.initializeByStruct(tspan, istate)
             return theSim

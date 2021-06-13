@@ -1,5 +1,5 @@
 import numpy as np
-from controller.SE2.linearSO import linearSO
+from controller.TSE2.linear import linear as linearSO
 from Curves import Explicit
 from matplotlib import pyplot as plt
 from structures import structure

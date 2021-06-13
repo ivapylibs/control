@@ -1,6 +1,6 @@
 import trajectory
 import numpy as np
-from controller.linear import linear
+import controller.linear
 from Curves import CurveBase
 from Lie import SE2
 from structures import structure
@@ -8,7 +8,7 @@ from simController import simController
 
 import pdb
 
-class linearSO(linear):
+class linear(controller.linear.linear):
     def __init__(self, xeq=0, ueq=0, K=0):
         super().__init__(xeq, ueq, K)
         self.inBodyFrame = False
@@ -80,6 +80,7 @@ class linearSO(linear):
             return u, rc
 
         self.compute = trackLinControl
+        return trackLinControl
 
     def trackerPath(self, xdes, uFF=None, stateDep=False):
         def trackLinControl(t=None, x=None):
@@ -179,7 +180,7 @@ class linearSO(linear):
                 else:
                     xErr = np.vstack((pErr, aErr, gCInv*(vDes - vCur)))
                 u = self.ueq + np.matmul(self.K, xErr)
-                pdb.set_trace()
+                #pdb.set_trace()
 
             else:
                 u = np.zeros((np.shape(self.K)[0], 1))
@@ -194,7 +195,6 @@ class linearSO(linear):
     def simBuilder(ceom, cfS):
         def initialize(istate, desTraj):
             cfS.controller.trackerNew(desTraj)
-
             theSim = simController(solver, cfS.controller)
             theSim.initializeByStruct(desTraj.tspan, istate)
             return theSim
