@@ -127,36 +127,6 @@ class linear(controller.linear.linear):
                 rc = np.zeros((np.shape(self.K)[1], 1))
             return u, rc
         self.compute = trackLinControl
-
-    def trackLinControltrackLinControl(t=None, x=None):
-        def trackLinControl(t=None, x=None):
-            if(t is not None and x is not None):
-                rc = xdes(t)
-                gDes = SE2(x=rc[0:2], R = SE2.rotationMatrix(rc[2]))
-                vDes = rc[3:6]
-
-                gCur = SE2(x=x[0:2], R=SE2.rotationMatrix(x[2]))
-                vCur = x[3:6]
-
-                gCInv = gCur.inv()
-                gErr = gCInv*gDes
-
-                aErr = gErr.getAngle()
-                pErr = gErr.getTranslation()
-
-                if(self.inBodyFrame):
-                    xErr = np.vstack((pErr, aErr, vDes - gCInv * vCur))
-                else:
-                    xErr = np.vstack((pErr, aErr, gCInv*(vDes - vCur)))
-                u = self.ueq + np.matmul(self.K, xErr)
-                #pdb.set_trace()
-
-            else:
-                u = np.zeros((np.shape(self.K)[0], 1))
-                rc = np.zeros((np.shape(self.K)[1], 1))
-            return u, rc
-
-        self.compute = trackLinControl
         return trackLinControl
 
     def trackerNew(self, desTraj):
