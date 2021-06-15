@@ -28,12 +28,12 @@ desTraj = trajectory.Path(path, tspan)
 parms = structure()
 parms.Ts = .01
 parms.x0 = np.array([[0],[0]])
-parms.Td = .5
+parms.Td = .2
 tSynth = mpcTrivial(parms)
 
 ts = structure()
-ts.Th = .5
-ts.Td = .5
+ts.Th = .7
+ts.Td = .2
 ts.Ts = .01
 
 tSynth.updatefPtr(desTraj.x)

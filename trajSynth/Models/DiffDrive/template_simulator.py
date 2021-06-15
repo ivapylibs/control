@@ -53,6 +53,7 @@ def template_simulator(model,curTime):
         t_now = t_now + curTime
         tvp_template['xDes'] = t_now
         tvp_template['yDes'] = t_now
+        tvp_template['TDes'] = t_now
         return tvp_template
 
     # Set the tvp_fun:

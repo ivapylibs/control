@@ -44,6 +44,10 @@ def template_model():
     X_s = model.set_variable('_x',  'X_s')  # X Pos
     Y_s = model.set_variable('_x',  'Y_s')  # Y Pos
     T_s = model.set_variable('_x',  'T_s')  # Theta
+    V_x = model.set_variable('_x',  'V_x')  # Velocity in X
+    V_y = model.set_variable('_x',  'V_y')
+    W = model.set_variable('_x',    'W')
+
     #V_s = model.set_variable('_x',  'V_s')  # Vel
     # Input struct (optimization variables):
     inp1 = model.set_variable('_u',  'inp1') # Accl
@@ -52,10 +56,16 @@ def template_model():
     xDes = model.set_variable(var_type = '_tvp', var_name = 'xDes') #time parameters
     yDes = model.set_variable(var_type = '_tvp', var_name = 'yDes')
     TDes = model.set_variable(var_type ='_tvp', var_name = 'TDes')
+    VxDes = model.set_variable(var_type = '_tvp', var_name ='VxDes')
+    VyDes = model.set_variable(var_type = '_tvp', var_name ='VyDes')
+    WDes = model.set_variable(var_type = '_tvp', var_name ='WDes')
     # Differential equations
-    model.set_rhs('X_s', inp1*np.cos(T_s))
-    model.set_rhs('Y_s', inp1*np.sin(T_s))
-    model.set_rhs('T_s', inp2)
+    model.set_rhs('X_s', V_x)
+    model.set_rhs('Y_s', V_y)
+    model.set_rhs('T_s', W)
+    model.set_rhs('V_x',np.cos(T_s)*inp1)
+    model.set_rhs('V_y',np.sin(T_s)*inp2)
+    model.set_rhs('W',inp2)
     #model.set_rhs('V_s', inp1)
 
     # Build the model

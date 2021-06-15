@@ -47,6 +47,7 @@ class fixedHorizons(base):
                 if self.tState == self.fixedHorizonsState.SYNTHESIZE:
                     self.myt = 0;
                     self.nextHorizon(t,x)
+                    #self.control.tracker(self.synTraj)
                     self.control.trackerPath(self.synTraj)
                     self.tState = self.fixedHorizonsState.TRACK
 

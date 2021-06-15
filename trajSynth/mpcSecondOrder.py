@@ -4,12 +4,12 @@ from trajSynth.base import base
 from structures import structure
 import numpy as np
 import do_mpc
-from trajSynth.Models.Trivial.template_model import template_model
-from trajSynth.Models.Trivial.template_mpc import template_mpc
-from trajSynth.Models.Trivial.template_simulator import template_simulator
+from trajSynth.Models.SecondOrder.template_model import template_model
+from trajSynth.Models.SecondOrder.template_mpc import template_mpc
+from trajSynth.Models.SecondOrder.template_simulator import template_simulator
 from matplotlib import pyplot as plt
 
-class mpcTrivial(base):
+class mpcSecondOrder(base):
 
     def __init__(self,param):
         self.model = template_model()
