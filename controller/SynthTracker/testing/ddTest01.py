@@ -63,12 +63,12 @@ desTraj = trajectory.Path(path, tspan)
 parms = structure()
 parms.Ts = .01
 parms.x0 = np.array([[0],[0],[0]])
-parms.Td = 2
+parms.Td = .3
 tSynth = mpcDiff(parms)
 
 ts = structure()
-ts.Th = 4
-ts.Td = 2
+ts.Th = .5
+ts.Td = .3
 ts.Ts = .01
 
 tSynth.updatefPtr(desTraj.x)
@@ -95,18 +95,17 @@ xdes = np.squeeze(desTraj.x(xsol.t))
 
 plt.figure()
 plt.plot(xsol.t, xsol.x[0,:], 'b')
+plt.plot(xsol.t, xdes[0,:], 'g--')
+#plt.title("X position tracking")
 
-plt.plot(xsol.t, xdes[0], 'g--')
-plt.title("X position tracking")
-
-plt.figure()
-plt.plot(xsol.t, xsol.x[1,:], 'b')
-plt.plot(xsol.t, xdes[1], 'g--')
-plt.title("Y position tracking")
+plt.plot(xsol.t, xsol.x[1,:], 'y')
+plt.plot(xsol.t, xdes[1,:], 'r--')
+plt.title("X and Y position tracking")
+plt.legend(["X","Xdes","Y","Ydes"])
 
 plt.figure()
 plt.plot(xsol.x[0,:], xsol.x[1,:], 'b')
-#plt.plot(xdes[1,:], xdes[0,:], 'g--')
+plt.plot(xdes[0,:], xdes[1,:], 'g--')
 plt.legend(["Actual", "Desired"])
 
 plt.axis('square')
