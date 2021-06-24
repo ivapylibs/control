@@ -87,7 +87,7 @@ class fixedHorizons(base):
 
         self.synTraj = self.synthesizer.followPath(istate,pathSeg.x)
         #print(istate)
-        #plt.plot(self.synTraj[:,0],self.synTraj[:,1],'b')
+        plt.plot(self.synTraj[:,0],self.synTraj[:,1],'b')
 
     @staticmethod
     def simBuilder(ceom, cfS):
