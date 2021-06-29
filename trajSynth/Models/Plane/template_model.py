@@ -39,23 +39,29 @@ def template_model():
     model = do_mpc.model.Model(model_type)
 
     # Certain parameters
-
+    g = 9.8
+    K = 1
+    m = 1
     # States struct (optimization variables):
     X_s = model.set_variable('_x',  'X_s')  # X Pos
     Y_s = model.set_variable('_x',  'Y_s')  # Y Pos
-    T_s = model.set_variable('_x',  'T_s')  # Theta
+    Z_s = model.set_variable('_x',  'Z_s')  # Z Pos
+    Psi_s = model.set_variable('_u',  'Psi_s')  # Theta
+    V_s = model.set_variable('_x',  'V_s') #Veloctiy
+
     #V_s = model.set_variable('_x',  'V_s')  # Vel
     # Input struct (optimization variables):
-    inp1 = model.set_variable('_u',  'inp1') # Accl
-    inp2 = model.set_variable('_u',  'inp2') # Omega
+    thrust = model.set_variable('_u',  'thrust') # Accl
+    gam = model.set_variable('_u',  'gam') # Omega
+    phi = model.set_variable('_u',  'phi') #phi
 
-    xDes = model.set_variable(var_type = '_tvp', var_name = 'xDes') #time parameters
-    yDes = model.set_variable(var_type = '_tvp', var_name = 'yDes')
-    TDes = model.set_variable(var_type ='_tvp', var_name = 'TDes')
+
     # Differential equations
-    model.set_rhs('X_s', inp1*np.cos(T_s))
-    model.set_rhs('Y_s', inp1*np.sin(T_s))
-    model.set_rhs('T_s', inp2)
+    model.set_rhs('X_s', V_s*np.cos(Psi_s)*np.cos(gam))
+    model.set_rhs('Y_s', V_s*np.sin(Psi_s)*np.cos(gam))
+    model.set_rhs('Z_s', V_s*np.sin(gam))
+    model.set_rhs('V_s', -K/m*V_s**2 - g*np.sin(gam) + thrust/m)
+    #model.set_rhs('Psi_s', g/V_s*np.tan(phi))
     #model.set_rhs('V_s', inp1)
 
     # Build the model

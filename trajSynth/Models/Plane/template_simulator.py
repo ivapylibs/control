@@ -29,36 +29,25 @@ sys.path.append('../../')
 import do_mpc
 
 
-def template_model():
+def template_simulator(model):
     """
     --------------------------------------------------------------------------
-    template_model: Variables / RHS / AUX
+    template_simulator: tuning parameters
     --------------------------------------------------------------------------
     """
-    model_type = 'continuous' # either 'discrete' or 'continuous'
-    model = do_mpc.model.Model(model_type)
+    simulator = do_mpc.simulator.Simulator(model)
 
-    # Certain parameters
+    params_simulator = {
+        'integration_tool': 'cvodes',
+        'abstol': 1e-10,
+        'reltol': 1e-10,
+        't_step': .01
+    }
 
-    # States struct (optimization variables):
-    X_s = model.set_variable('_x',  'X_s')  # X Pos
-    Y_s = model.set_variable('_x',  'Y_s')  # Y Pos
-    T_s = model.set_variable('_x',  'T_s')  # Theta
-    #V_s = model.set_variable('_x',  'V_s')  # Vel
-    # Input struct (optimization variables):
-    inp1 = model.set_variable('_u',  'inp1') # Accl
-    inp2 = model.set_variable('_u',  'inp2') # Omega
+    simulator.set_param(**params_simulator)
+    # Get the template
 
-    xDes = model.set_variable(var_type = '_tvp', var_name = 'xDes') #time parameters
-    yDes = model.set_variable(var_type = '_tvp', var_name = 'yDes')
-    TDes = model.set_variable(var_type ='_tvp', var_name = 'TDes')
-    # Differential equations
-    model.set_rhs('X_s', inp1*np.cos(T_s))
-    model.set_rhs('Y_s', inp1*np.sin(T_s))
-    model.set_rhs('T_s', inp2)
-    #model.set_rhs('V_s', inp1)
+    # Define the function (indexing is much simpler ...)
+    simulator.setup()
 
-    # Build the model
-    model.setup()
-
-    return model
+    return simulator

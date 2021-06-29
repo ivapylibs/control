@@ -29,36 +29,49 @@ sys.path.append('../../')
 import do_mpc
 
 
-def template_model():
+def template_mpc(model):
     """
     --------------------------------------------------------------------------
-    template_model: Variables / RHS / AUX
+    template_mpc: tuning parameters
     --------------------------------------------------------------------------
     """
-    model_type = 'continuous' # either 'discrete' or 'continuous'
-    model = do_mpc.model.Model(model_type)
+    mpc = do_mpc.controller.MPC(model)
 
-    # Certain parameters
+    setup_mpc = {
+        'n_horizon': 10,
+        'n_robust': 0,
+        'open_loop': 0,
+        't_step': .04,
+        'state_discretization': 'collocation',
+        'collocation_type': 'radau',
+        'collocation_deg': 2,
+        'collocation_ni': 2,
+        'store_full_solution': True,
+        # Use MA27 linear solver in ipopt for faster calculations:
+        #'nlpsol_opts': {'ipopt.linear_solver': 'MA27'}
+    }
+    n_horizon = 20;
+    mpc.set_param(**setup_mpc)
 
-    # States struct (optimization variables):
-    X_s = model.set_variable('_x',  'X_s')  # X Pos
-    Y_s = model.set_variable('_x',  'Y_s')  # Y Pos
-    T_s = model.set_variable('_x',  'T_s')  # Theta
-    #V_s = model.set_variable('_x',  'V_s')  # Vel
-    # Input struct (optimization variables):
-    inp1 = model.set_variable('_u',  'inp1') # Accl
-    inp2 = model.set_variable('_u',  'inp2') # Omega
+    p = 100;
+    mterm = (model.x['X_s'])**p + (model.x['Y_s'])**p + (model.x['Z_s'])**p # terminal cost
+    lterm = (model.x['X_s'])**p + (model.x['Y_s'])**p + (model.x['Z_s'])**p# Legrangian
+    # stage cost
 
-    xDes = model.set_variable(var_type = '_tvp', var_name = 'xDes') #time parameters
-    yDes = model.set_variable(var_type = '_tvp', var_name = 'yDes')
-    TDes = model.set_variable(var_type ='_tvp', var_name = 'TDes')
-    # Differential equations
-    model.set_rhs('X_s', inp1*np.cos(T_s))
-    model.set_rhs('Y_s', inp1*np.sin(T_s))
-    model.set_rhs('T_s', inp2)
-    #model.set_rhs('V_s', inp1)
+    mpc.set_objective(mterm=mterm, lterm=lterm)
 
-    # Build the model
-    model.setup()
+    mpc.set_rterm(thrust=1e-4,gam = 1e-4,phi = 1e-4) # input penalty
 
-    return model
+
+    #mpc.bounds['lower', '_x', 'V_s'] = 0.0
+    #mpc.bounds['upper','_x',   'V_s'] = 4.0
+
+
+    mpc.bounds['lower','_u','thrust'] = 0.0
+    #mpc.bounds['upper','_u','thrust'] = 20
+
+    tvp_template = mpc.get_tvp_template()
+
+    mpc.setup()
+
+    return mpc

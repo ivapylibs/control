@@ -27,9 +27,9 @@ class mpcDiff(base):
         self.updatefPtr(desTraj)
         self.mpc = template_mpc(self.model,self.fPtr,self.curTime)
         self.sim = template_simulator(self.model,self.curTime)
-        self.mpc.x0 = x0
-        self.sim.x0 = x0
-        self.estimator.x0 = x0
+        self.mpc.x0 = x0[0:3]
+        self.sim.x0 = x0[0:3]
+        self.estimator.x0 = x0[0:3]
 
         self.mpc.set_initial_guess()
 

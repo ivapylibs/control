@@ -4,9 +4,21 @@ from Curves import Explicit
 from matplotlib import pyplot as plt
 from structures import structure
 from niODERK4 import niODERK4
+import math
 import trajectory.Path
 
 import pdb
+
+
+def nlDyn(t,x,u):
+    sdA = np.diag([1,1,1],k=3)
+    #print(sdA)
+    sdB = np.zeros((6,2))
+    sdB[3,0] = math.cos(x[2])
+    sdB[4,0] = math.sin(x[2])
+    sdB[5,1] = 1
+    a = np.matmul(sdA,x) + np.matmul(sdB,u)
+    return a
 
 # Define System Dynamics
 nuEq = 100
@@ -24,17 +36,17 @@ Q = np.diag(np.array([10, 10, 5, 2, 2, 2]))
 linctrl = linearSO(np.array([0, 0, 0, nuEq, 0, 0]).reshape((6,1)), np.zeros((2,1)))
 K = np.array([[2, 0, 0, 5, 0, 0],[0, 3, 4, 0, 7, 11]])
 
-linctrl.setByCARE(A, B, Q)
-#linctrl.set(K)
+#linctrl.setByCARE(A, B, Q)
+linctrl.set(K)
 #linctrl.noControl()
 
-leom = linearSO.systemDynamics(A, B)
+#leom = linearSO.systemDynamics(A, B)
 
 
 cfS = structure(dt=0.05, odeMethod=niODERK4, controller=linctrl)
 
 #fCirc = lambda t: np.array([[np.sin(t/2)], [(1/2)*np.cos(t/2)], [1-np.cos(t/2)], [(1/2)*np.sin(t/2)]])
-pathType = "lineTheta"
+pathType = "arc"
 if(pathType == "lineX"):
     def line(t):
         if(np.isscalar(t)):
@@ -75,13 +87,13 @@ elif(pathType == 'arc'):
         return np.vstack((nuEq*rad*np.sin(t/rad), nuEq*rad*(1-np.cos(t/rad)), t/rad, (nuEq)*np.cos(t/rad), nuEq*np.sin(t/rad), np.ones((1,length))/rad))
 
     xi = np.array([0,0,0,0.7*nuEq,0,0]).reshape((6,1))
-    tspan = [0,5]
+    tspan = [0,50]
     path = Explicit(arc, tspan=tspan)
 
 #pdb.set_trace()
 desTraj = trajectory.Path(path, tspan)
 
-sm = cfS.controller.simBuilder(leom, cfS)
+sm = cfS.controller.simBuilder(nlDyn, cfS)
 
 istate = structure()
 

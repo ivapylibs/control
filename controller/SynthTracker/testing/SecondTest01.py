@@ -2,38 +2,42 @@ import numpy as np
 from controller.SynthTracker.FixedHorizons import fixedHorizons
 from controller.linear import linear
 from Curves import Explicit
-from trajSynth.mpcTrivial import mpcTrivial
+from trajSynth.mpcSecondOrder import mpcSecondOrder
 from matplotlib import pyplot as plt
 from structures import structure
 from niODERK4 import niODERK4
 import trajectory.Path
 
 
-A = np.zeros((2,2))
-B = np.eye(2)
-Q = np.eye(2)
+A = np.zeros((4,4))
+A[0,2] = 1
+A[1,3] = 1
+B = np.zeros((4,2))
+B[2,0] = 1
+B[3,1] = 1
+Q = np.eye(4)
 
-linctrl = linear(np.array([[0],[0]]), np.array([[0],[0]]))
+linctrl = linear(np.array([[0],[0],[0],[0]]), np.array([[0],[0]]))
 linctrl.setByCARE(A, B, Q)
 linctrl.noControl()
 
 leom = linear.systemDynamics(A, B)
 
 tspan = [0,10]
-fCirc = lambda t: np.array([[np.sin(t/2)] , [1-np.cos(t/2)]])
+fCirc = lambda t: np.array([[np.sin(t/2)] , [1-np.cos(t/2)],[1/2*np.cos(1/2*t)],[1/2*np.sin(1/2*t)]])
 path = Explicit(fCirc, tspan=tspan)
 desTraj = trajectory.Path(path, tspan)
 
 #define MPC paramaters
 parms = structure()
 parms.Ts = .01
-parms.x0 = np.array([[0],[0]])
-parms.Td = .5
-tSynth = mpcTrivial(parms)
+parms.x0 = np.array([[0],[0],[0],[0]])
+parms.Td = .2
+tSynth = mpcSecondOrder(parms)
 
 ts = structure()
-ts.Th = .5
-ts.Td = .5
+ts.Th = .7
+ts.Td = .2
 ts.Ts = .01
 
 tSynth.updatefPtr(desTraj.x)
@@ -56,12 +60,12 @@ xdes = np.squeeze(desTraj.x(xsol.t))
 plt.figure()
 plt.plot(xsol.t, xsol.x[0,:], 'b')
 plt.plot(xsol.t, xdes[0,:], 'g--')
-plt.title("X position tracking")
+#plt.title("X position tracking")
 
-plt.figure()
-plt.plot(xsol.t, xsol.x[1,:], 'b')
-plt.plot(xsol.t, xdes[1,:], 'g--')
-plt.title("Y position tracking")
+plt.plot(xsol.t, xsol.x[1,:], 'y')
+plt.plot(xsol.t, xdes[1,:], 'r--')
+plt.title("X and Y position tracking")
+plt.legend(["X","Xdes","Y","Ydes"])
 
 plt.figure()
 plt.plot(xsol.x[0,:], xsol.x[1,:], 'b')

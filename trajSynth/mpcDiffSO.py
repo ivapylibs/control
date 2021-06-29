@@ -4,12 +4,12 @@ from trajSynth.base import base
 from structures import structure
 import numpy as np
 import do_mpc
-from trajSynth.Models.Trivial.template_model import template_model
-from trajSynth.Models.Trivial.template_mpc import template_mpc
-from trajSynth.Models.Trivial.template_simulator import template_simulator
-from matplotlib import pyplot as plt
+from trajSynth.Models.DiffDriveSO.template_model import template_model
+from trajSynth.Models.DiffDriveSO.template_mpc import template_mpc
+from trajSynth.Models.DiffDriveSO.template_simulator import template_simulator
 
-class mpcTrivial(base):
+
+class mpcDiffSO(base):
 
     def __init__(self,param):
         self.model = template_model()
@@ -24,8 +24,6 @@ class mpcTrivial(base):
         self.fPtr = desTraj
 
     def mainloop(self,x0,desTraj):
-        #print(x0)
-        #input("Press Enter to continue...")
         self.updatefPtr(desTraj)
         self.mpc = template_mpc(self.model,self.fPtr,self.curTime)
         self.sim = template_simulator(self.model,self.curTime)
@@ -53,14 +51,15 @@ class mpcTrivial(base):
         """
         Run MPC main loop:
         """
-        self.mainloop(x0,desTraj)
-        #val = self.mpc.data['_x']
-        #plt.plot(val[:,0],val[:,1])
-        #plt.show()
+        for k in range(1):
+            self.mainloop(x0,desTraj)
         #print(x0)
         #print(self.mpc.data['_x'])
-        #input("Press Enter to continue...")
+        #input("press Enter")
+        #print(self.mpc.data['_u'])
+        #input("enter")
+        #self.mpc.data['_x']
         myarry = np.concatenate((self.mpc.data['_x'],self.mpc.data['_u']),axis=1)
         #print(myarry)
         #input("pressenter")
-        return self.mpc.data
+        return myarry

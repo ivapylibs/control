@@ -5,6 +5,7 @@ from Curves import CurveBase
 from Lie import SE2
 from structures import structure
 from simController import simController
+import math
 
 import pdb
 
@@ -88,21 +89,20 @@ class linear(controller.linear.linear):
                 myt = int(t/.01)
                 #print(myt)
                 rc = xdes[myt]
-                #print(rc)
-                #input()
-                #print(np.shape(rc))
-                rc = np.array(rc)[np.newaxis]
-                rc = rc.T
-                #print(rc)
-                #input("enter")
-                gDes = SE2(x=rc[0:2], R = SE2.rotationMatrix(rc[2]))
-                temp = np.array([rc[3],0])[np.newaxis]
-                temp = temp.T
+                rc = np.array([rc])
 
-                vDes = np.concatenate((temp,[rc[4]]))
-                #print(gDes)
+                rc = rc.T
+                gDes = SE2(x=rc[0:2], R = SE2.rotationMatrix(rc[2]))
+                if(len(rc)== 5):
+                    vDes = np.array([[rc[3,0]*math.cos(rc[2,0]),rc[3,0]*math.sin(rc[2,0]),rc[4,0]]])
+                    vDes = vDes.T
+                    uFF = np.vstack((0,0))
+                else:
+                    vDes = rc[3:6]
+                    uFF = np.vstack((rc[6],rc[7]))
+
                 #print(vDes)
-                #input('enter')
+                #input()
 
                 gCur = SE2(x=x[0:2], R=SE2.rotationMatrix(x[2]))
                 vCur = x[3:6]
@@ -116,11 +116,14 @@ class linear(controller.linear.linear):
                 pErr = gErr.getTranslation()
 
                 if(self.inBodyFrame):
-                    xErr = np.vstack((pErr, aErr))
+
+                    xErr = np.vstack((pErr, aErr,vDes - gCInv * vCur))
                 else:
-                    xErr = np.vstack((pErr, aErr))
-                u = self.ueq + np.matmul(self.K, xErr) + rc[2:4]
-                #pdb.set_trace()
+                    xErr = np.vstack((pErr, aErr,gCInv*(vDes - vCur)))
+                #print(xErr)
+                #print(self.K)
+                #input()
+                u = self.ueq + np.matmul(self.K, xErr) + uFF
 
             else:
                 u = np.zeros((np.shape(self.K)[0], 1))
@@ -150,6 +153,7 @@ class linear(controller.linear.linear):
                 else:
                     xErr = np.vstack((pErr, aErr, gCInv*(vDes - vCur)))
                 u = self.ueq + np.matmul(self.K, xErr)
+
                 #pdb.set_trace()
 
             else:
