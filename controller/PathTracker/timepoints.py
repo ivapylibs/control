@@ -55,7 +55,6 @@ class timepoints(base):
         xDesCurr = self.specs.vec2state(self.desTraj.x(tc))
         xDesTerm = self.specs.vec2state(self.desTraj.x(tTerm))
 
-        #pdb.set_trace() 
         self.path.generate(tc, xDesCurr, tTerm, xDesTerm)
 
     @staticmethod
