@@ -23,28 +23,31 @@ theController.set(np.eye(6))
 
 
 tSpan = np.array([0, 5])
+Dt = tSpan[1] - tSpan[0]
 
 g0 = theGroup()
-initFlag = 0
+initFlag = 2
 if(initFlag == 0):
     gd = lambda t: theGroup(x=np.array([t, t, t]).reshape((3,1)), R=np.eye(3))
 elif(initFlag == 1):
-    # TODO: this Trajectory not implemented yet
     e1 = np.array([2, 5, -6]).reshape((3,1))
     e1 = e1/np.linalg.norm(e1)
     e2 = np.array([0, 6, 5]).reshape((3,1))
     e2 = e2/np.linalg.norm(e2)
     e3 = np.cross(np.squeeze(e1), np.squeeze(e2))
 
-    gd = theGroup(x=np.zeros((3,1)), R=np.hstack((e1, e2, e3[:, np.newaxis])))
+    g = theGroup(x=np.zeros((3,1)), R=np.hstack((e1, e2, e3[:, np.newaxis])))
+    xi = g.log(Dt)
+    gd = lambda t: SE3.SE3.exp(xi, t)
 elif(initFlag == 2):
-    # TODO: this Trajectory not implemented yet
     e1 = np.array([2, 5, -6]).reshape((3,1))
     e1 = e1/np.linalg.norm(e1)
     e2 = np.array([0, 6, 5]).reshape((3,1))
     e2 = e2/np.linalg.norm(e2)
     e3 = np.cross(np.squeeze(e1), np.squeeze(e2))
-    gd = theGroup(x=2*np.ones((3,1)), R=np.hstack((e1, e2, e3[:, np.newaxis])))
+    g = theGroup(x=2*np.ones((3,1)), R=np.hstack((e1, e2, e3[:, np.newaxis])))
+    xi = g.log(Dt)
+    gd = lambda t: SE3.SE3.exp(xi, t)
 print(gd)
 
 desTraj = Curves.Explicit(gd)
