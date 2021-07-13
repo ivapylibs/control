@@ -1,7 +1,7 @@
-from Lie import SE2
 from controlSystem import controlSystem
 import matplotlib.pyplot as plt
 import numpy as np
+import Lie.group.SE2.Homog
 import pdb
 
 class hoverplane(controlSystem):
@@ -84,7 +84,7 @@ class hoverplane(controlSystem):
     def dynamicsForward(Parms, nuEq):
         def hoverplaneNonLinear(t, x, u):
             sdA = np.diag(np.ones((3,)), k=3)
-            R = SE2.rotationMatrix(x[2])
+            R = Lie.group.SE2.Homog.rotationMatrix(x[2])
 
             Delta = np.array([[Parms.linD[0], 0],[0, -Parms.linD[1]]])
             sdA[3:5, 3:5] = np.matmul(np.matmul(R, Delta), R.T)

@@ -2,7 +2,7 @@ import trajectory
 import numpy as np
 import controller.linear
 from Curves import CurveBase
-from Lie import SE2
+import Lie.group.SE2.Homog
 from structures import structure
 from simController import simController
 import math
@@ -56,10 +56,10 @@ class linear(controller.linear.linear):
         def trackLinControl(t=None, x=None):
             if(t is not None and x is not None):
                 rc = xdes(t)
-                gDes = SE2(x=rc[0:2], R = SE2.rotationMatrix(rc[2]))
+                gDes = Lie.group.SE2.Homog(x=rc[0:2], R = Lie.group.SE2.Homog.rotationMatrix(rc[2]))
                 vDes = rc[3:6]
 
-                gCur = SE2(x=x[0:2], R=SE2.rotationMatrix(x[2]))
+                gCur = Lie.group.SE2.Homog(x=x[0:2], R=Lie.group.SE2.Homog.rotationMatrix(x[2]))
                 vCur = x[3:6]
 
                 gCInv = gCur.inv()
@@ -92,7 +92,7 @@ class linear(controller.linear.linear):
                 rc = np.array([rc])
 
                 rc = rc.T
-                gDes = SE2(x=rc[0:2], R = SE2.rotationMatrix(rc[2]))
+                gDes = Lie.group.SE2.Homog(x=rc[0:2], R = Lie.group.SE2.Homog.rotationMatrix(rc[2]))
                 if(len(rc)== 5):
                     vDes = np.array([[rc[3,0]*math.cos(rc[2,0]),rc[3,0]*math.sin(rc[2,0]),rc[4,0]]])
                     vDes = vDes.T
@@ -104,7 +104,7 @@ class linear(controller.linear.linear):
                 #print(vDes)
                 #input()
 
-                gCur = SE2(x=x[0:2], R=SE2.rotationMatrix(x[2]))
+                gCur = Lie.group.SE2.Homog(x=x[0:2], R=Lie.group.SE2.Homog.rotationMatrix(x[2]))
                 vCur = x[3:6]
                 #print(self.xeq)
                 #print(vCur)
@@ -136,10 +136,10 @@ class linear(controller.linear.linear):
         def trackLinControl(t=None, x=None):
             if(t is not None and x is not None):
                 rc = desTraj.x(t)
-                gDes = SE2(x=rc[0:2], R = SE2.rotationMatrix(rc[2]))
+                gDes = Lie.group.SE2.Homog(x=rc[0:2], R = Lie.group.SE2.Homog.rotationMatrix(rc[2]))
                 vDes = rc[3:6]
 
-                gCur = SE2(x=x[0:2], R=SE2.rotationMatrix(x[2]))
+                gCur = Lie.group.SE2.Homog(x=x[0:2], R=Lie.group.SE2.Homog.rotationMatrix(x[2]))
                 vCur = x[3:6]
 
                 gCInv = gCur.inv()

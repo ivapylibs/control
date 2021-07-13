@@ -30,10 +30,10 @@ ng = 10
 tPts = np.vstack((xx.T.ravel(), yy.T.ravel(), zz.T.ravel()))
 isReach = np.squeeze(rs.isReachablePoint(tPts))
 
-'''
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+
 ax.scatter(tPts[0, isReach==True],tPts[1, isReach==True], tPts[2, isReach==True],color='g', marker='.')
 ax.scatter(tPts[0, isReach==False],tPts[1, isReach==False], tPts[2, isReach==False],color='r', marker='.')
-plt.show()
-'''
 
 rs.plotBoundary(dg)

@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from structures import structure
 from niODERK4 import niODERK4
 import trajectory.Path
-from Lie import SE3
+import Lie.group.SE3.Homog
 from Lie.tangent import Element
 
 import pdb
@@ -49,7 +49,7 @@ def vec2Tangent(x):
 
     R = np.hstack((unitDir, y, z))
 
-    g = SE3(x=x[0:3], R=R)
+    g = Lie.group.SE3.Homog(x=x[0:3], R=R)
     return Element(g, x[3:])
 
 ts.vec2state = vec2Tangent

@@ -3,7 +3,7 @@ from structures import structure
 import numpy as np
 from numpy.core.fromnumeric import reshape
 import reachable.SE2.fsDiffDriveFO
-import Lie.SE3
+import Lie.group.SE3.Homog
 import matplotlib.pyplot as plt
 import pdb
 
@@ -21,7 +21,7 @@ class DiffDriveFO(reachable.SE2.fsDiffDriveFO.DiffDriveFO):
             n = n/np.linalg.norm(n)
 
         u = np.array([[1], [0], [0]])
-        Rx = Lie.SE3.RotX(np.pi/2)
+        Rx = Lie.group.SE3.Homog.RotX(np.pi/2)
         Rx[0,0] = 0
         R = np.hstack((u, n, np.matmul(Rx, n))).T
 
