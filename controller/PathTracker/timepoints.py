@@ -63,12 +63,6 @@ class timepoints(base):
         xDesCurr = self.specs.vec2state(self.desTraj.x(tc))
         xDesTerm = self.specs.vec2state(self.desTraj.x(tTerm))
 
-        #print([xDesCurr,xDesTerm])
-        #input('xdesired in nextLeg')
-
-        #pdb.set_trace()
-        #print([tc,tTerm])
-        #input('in nextleg')
         self.path.generate(tc, xDesCurr, tTerm, xDesTerm)
         myt = 0
         for i in range(1,100):
