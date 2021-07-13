@@ -23,8 +23,8 @@ class SimFirstOrder(simulation):
         if (self.state == self.INTEGRATING):   #! Perform integration step
             xi = self.diffeq(self.tc, self.xc, varargin)
             #pdb.set_trace()
-            gi = self.group.exp(xi, self.dt)
-            xn = gi* self.xc
+            dg = self.group.exp(xi, self.dt)
+            xn = self.xc*dg
             self.xc = xn
 
             self.tc = self.tc + self.dt
@@ -39,12 +39,12 @@ class SimFirstOrder(simulation):
                 dt = self.t[-1] - self.t[-2]
 
                 xi = self.diffeq(self.tc, self.xc, varargin)
-                gi = self.group.exp(xi, dt)
-                xn = gi * self.xc; 
+                dg = self.group.exp(xi, dt)
+                xn = self.xc*dg
             else:
                 xi = self.diffeq(self.tc, self.xc, varargin)
-                gi = self.group.exp(xi, self.dt)
-                xn = gi * self.xc; 
+                dg = self.group.exp(xi, self.dt)
+                xn = self.xc*dg
             
             self.xc = xn
             self.tc = self.t[-1] #! or set to tn?

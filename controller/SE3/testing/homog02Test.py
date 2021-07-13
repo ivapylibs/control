@@ -1,5 +1,5 @@
 import numpy as np
-import Lie.group.SE3 as SE3
+import Lie.group.SE3.Homog
 from controller.SE3.linear import linear as linearSE3
 from numIntegrator.group.simFirstOrder import SimFirstOrder
 from simController import simController
@@ -10,7 +10,7 @@ import pdb
 '''
 Tests regulator ability of the linearSE3 class
 '''
-theGroup = SE3.SE3
+theGroup = Lie.group.SE3.Homog
 theCEOM = linearSE3.systemDynamics()
 
 dt = 0.10

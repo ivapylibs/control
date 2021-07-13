@@ -1,5 +1,5 @@
 import numpy as np
-import Lie.group.SE3 as SE3
+import Lie.group.SE3.Homog
 from controller.SE3.linear import linear as linearSE3
 from numIntegrator.group.simFirstOrder import SimFirstOrder
 from simController import simController
@@ -11,7 +11,7 @@ import pdb
 '''
 Tests regulator ability of the linearSE3 class
 '''
-theGroup = SE3.SE3
+theGroup = Lie.group.SE3.Homog
 theCEOM = linearSE3.systemDynamics()
 
 dt = 0.10
@@ -38,7 +38,7 @@ elif(initFlag == 1):
 
     g = theGroup(x=np.zeros((3,1)), R=np.hstack((e1, e2, e3[:, np.newaxis])))
     xi = g.log(Dt)
-    gd = lambda t: SE3.SE3.exp(xi, t)
+    gd = lambda t: theGroup.exp(xi, t)
 elif(initFlag == 2):
     e1 = np.array([2, 5, -6]).reshape((3,1))
     e1 = e1/np.linalg.norm(e1)
@@ -47,7 +47,7 @@ elif(initFlag == 2):
     e3 = np.cross(np.squeeze(e1), np.squeeze(e2))
     g = theGroup(x=2*np.ones((3,1)), R=np.hstack((e1, e2, e3[:, np.newaxis])))
     xi = g.log(Dt)
-    gd = lambda t: SE3.SE3.exp(xi, t)
+    gd = lambda t: theGroup.exp(xi, t)
 print(gd)
 
 desTraj = Curves.Explicit(gd)
