@@ -53,19 +53,21 @@ def template_mpc(model,fptr,curTime):
     n_horizon = 20;
     mpc.set_param(**setup_mpc)
 
-    mterm = (model.x['Y_s']-model.tvp['yDes'])**2 + (model.x['X_s']-model.tvp['xDes'])**2 # terminal cost
-    lterm = (model.x['Y_s']-model.tvp['yDes'])**6 + (model.x['X_s']-model.tvp['xDes'])**6 + (model.x['T_s'] - model.tvp['TDes'])**6 # Legrangian
+    mterm = model.x['Y_s']-model.x['Y_s'];
+    #mterm = (model.x['Y_s']-model.tvp['yDes'])**2 + (model.x['X_s']-model.tvp['xDes'])**2  + (model.x['T_s'] - model.tvp['TDes'])**2 # terminal cost
+    lterm = (model.x['Y_s']-model.tvp['yDes'])**2 + (model.x['X_s']-model.tvp['xDes'])**2  + (model.x['T_s'] - model.tvp['TDes'])**2 # Legrangian
     # stage cost
 
     mpc.set_objective(mterm=mterm, lterm=lterm)
 
-    mpc.set_rterm(inp1=1e-4,inp2 = 1e-4) # input penalty
+    mpc.set_rterm(inp1=1e-1,inp2 = 1e-1) # input penalty
 
 
-    #mpc.bounds['lower', '_x', 'V_s'] = 0.0
-    #mpc.bounds['upper','_x',   'V_s'] = 4.0
+    mpc.bounds['lower', '_u', 'inp1'] = 0.0
+    #mpc.bounds['upper','_u',   'inp1'] = 20.0
 
-
+    mpc.bounds['lower', '_u', 'inp2'] = -1.0
+    mpc.bounds['upper','_u',   'inp2'] = 1.0
 
     tvp_template = mpc.get_tvp_template()
 
