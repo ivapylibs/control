@@ -53,6 +53,9 @@ class niODERK4(numIntegrator):
         self.xc = niODERK4.DoStep(dynamics=self.dynamics, x=self.xc, t=self.tc, dt=dt, varargin=varargin)
         self.x[:, self.ci + 1: self.ci+2] = self.xc
 
+        #print('XC num int =')
+        #print(self.xc)
+        #input()
         return self.xc
 
     #

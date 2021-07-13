@@ -125,7 +125,8 @@ class linear(base):
         self.compute = doNothing
         return doNothing
 
-
+    def refresh(self,t,des):
+        return
 
 
     def tracker(self, xdes, uFF=None, stateDep=False):
@@ -158,6 +159,7 @@ class linear(base):
         def trackLinControl(t=None, x=None):
             if(t is not None and x is not None):
                 rc = desTraj.x(t)
+                #rc = rc[0:2]
                 u = self.ueq +  np.matmul(self.K, x - rc)
             else:
                 u = np.zeros(np.shape(self.K)[0], 1)
@@ -180,10 +182,17 @@ class linear(base):
         def trackLinControl(t=None, x=None):
             if(t is not None and x is not None):
                 myt = int(t/.01)
+                if myt >= len(desTraj['_x']):
+                    myt = len(desTraj['_x']) -1
+
+                #print(myt)
                 rc = self.transpose(desTraj['_x'][myt])
                 uff = self.transpose(desTraj['_u'][myt])
                 #print(uff)
                 #u = uff
+                #print(len(desTraj['_x']))
+                #print(x)
+                #input()
                 u = self.ueq +  np.matmul(self.K, x-rc) + uff
                 #print(u)
                 #input("Press Enter")
@@ -197,6 +206,9 @@ class linear(base):
         self.compute = trackLinControl
         return trackLinControl
 
+    def simrefresh(self,desTraj):
+        return
+
 
     @staticmethod
     def systemDynamics(A, B):
@@ -204,6 +216,7 @@ class linear(base):
             return np.matmul(A,x) + np.matmul(B,u)
 
         return LinearCEOM
+
 
     @staticmethod
     def structBuilder(ceom, cfs):

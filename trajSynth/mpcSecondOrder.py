@@ -29,6 +29,8 @@ class mpcSecondOrder(base):
         self.updatefPtr(desTraj)
         self.mpc = template_mpc(self.model,self.fPtr,self.curTime)
         self.sim = template_simulator(self.model,self.curTime)
+        #print(x0)
+        #input()
         self.mpc.x0 = x0
         self.sim.x0 = x0
         self.estimator.x0 = x0

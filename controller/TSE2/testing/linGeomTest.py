@@ -18,10 +18,12 @@ def nlDyn(t,x,u):
     sdB[4,0] = math.sin(x[2])
     sdB[5,1] = 1
     a = np.matmul(sdA,x) + np.matmul(sdB,u)
+    #print(a)
+    #input()
     return a
 
 # Define System Dynamics
-nuEq = 100
+nuEq = 1
 A = np.diag([1, 1, 1], k=3)
 A[4,2] = nuEq
 #print(A)
@@ -86,7 +88,7 @@ elif(pathType == 'arc'):
 
         return np.vstack((nuEq*rad*np.sin(t/rad), nuEq*rad*(1-np.cos(t/rad)), t/rad, (nuEq)*np.cos(t/rad), nuEq*np.sin(t/rad), np.ones((1,length))/rad))
 
-    xi = np.array([0,0,0,0.7*nuEq,0,0]).reshape((6,1))
+    xi = np.array([0,0,0,nuEq,0,0]).reshape((6,1))
     tspan = [0,50]
     path = Explicit(arc, tspan=tspan)
 

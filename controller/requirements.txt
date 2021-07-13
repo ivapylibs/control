@@ -1,0 +1,8 @@
+Control.egg==info
+scipy==1.6.2
+numpy==1.17.4
+matplotlib==3.1.2
+controller==0.1.0
+Curves==1.0.2
+structures==0.9.5
+trajectory==0.1.1

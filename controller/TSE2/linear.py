@@ -74,6 +74,11 @@ class linear(controller.linear.linear):
                     xErr = np.vstack((pErr, aErr, gCInv*(vDes - vCur)))
                 u = self.ueq + np.matmul(self.K, xErr)
                 #pdb.set_trace()
+                print(x)
+                print(rc)
+                print(xErr)
+                print(u)
+                input()
 
             else:
                 u = np.zeros((np.shape(self.K)[0], 1))
@@ -90,6 +95,8 @@ class linear(controller.linear.linear):
                 #print(myt)
                 rc = xdes[myt]
                 rc = np.array([rc])
+                #print(rc)
+                #input()
 
                 rc = rc.T
                 gDes = SE2(x=rc[0:2], R = SE2.rotationMatrix(rc[2]))
@@ -120,10 +127,9 @@ class linear(controller.linear.linear):
                     xErr = np.vstack((pErr, aErr,vDes - gCInv * vCur))
                 else:
                     xErr = np.vstack((pErr, aErr,gCInv*(vDes - vCur)))
-                #print(xErr)
-                #print(self.K)
-                #input()
+
                 u = self.ueq + np.matmul(self.K, xErr) + uFF
+
 
             else:
                 u = np.zeros((np.shape(self.K)[0], 1))
@@ -154,6 +160,15 @@ class linear(controller.linear.linear):
                     xErr = np.vstack((pErr, aErr, gCInv*(vDes - vCur)))
                 u = self.ueq + np.matmul(self.K, xErr)
 
+                #print('RC = ')
+                #print(rc)
+                #print('X = ')
+                #print(x)
+                #print('xErr = ')
+                #print(xErr)
+                #print('u = ')
+                #print(u)
+                #input()
                 #pdb.set_trace()
 
             else:
@@ -164,6 +179,9 @@ class linear(controller.linear.linear):
         if(isinstance(desTraj, CurveBase) or isinstance(desTraj, trajectory.Path)):
             self.compute = trackLinControl
             return trackLinControl
+        def simRefresh(self):
+            return
+        # REVIEW:
 
     @staticmethod
     def simBuilder(ceom, cfS):
