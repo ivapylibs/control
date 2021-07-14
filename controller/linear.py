@@ -125,7 +125,10 @@ class linear(base):
         self.compute = doNothing
         return doNothing
 
-    def refresh(self,t,des):
+    def refresh(self,prev,t):
+        if(prev.pState == prev.TimePointState.GENERATE):
+            prev.control.trackerNew(prev.path)
+            prev.pState = prev.TimePointState.TRACK
         return
 
 

@@ -30,7 +30,7 @@ class timepoints(base):
                     #self.pState = self.TimePointState.TRACK
 
                 #input()
-                    self.control.refresh(self,t)
+                self.control.refresh(self,t)
                 if (t >= self.tNext):
                     self.pState = self.TimePointState.GENERATE
                 # Always provide control.
