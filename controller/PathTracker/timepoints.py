@@ -64,12 +64,13 @@ class timepoints(base):
         xDesTerm = self.specs.vec2state(self.desTraj.x(tTerm))
 
         self.path.generate(tc, xDesCurr, tTerm, xDesTerm)
-        myt = 0
-        for i in range(1,100):
-            myt += .01
-            rc = self.path.x(tc+ myt)
-            plt.figure(1)
-            plt.scatter(rc[0,0],rc[1,0])
+        # Debug plotting
+        #myt = 0
+        #for i in range(1,100):
+        #    myt += .01
+        #    rc = self.path.x(tc+ myt)
+        #    plt.figure(1)
+        #    plt.scatter(rc[0,0],rc[1,0])
 
     def updatepState(self,input):
         self.pState = input

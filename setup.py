@@ -5,5 +5,5 @@ setup(name='Control',
       author='Justin Smith, Patricio Vela, Varun Madabushi',
       package_dir={'control':'./'},
       packages=['control', 'controller', 'trajSynth', 'reachable', 'numIntegrator'],
-
+      install_requires=['numpy', 'scipy', 'matplotlib', 'do_mpc', 'Casadi']
       )

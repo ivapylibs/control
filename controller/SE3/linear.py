@@ -62,7 +62,7 @@ class linear(controller.linear.linear):
             if(t is not None and x is not None):
                 rc = desTraj.x(t)
                 gDes = self.ref2group(rc)
-                gCur = self.ref2group(x)
+                gCur = self.state2group(x)
 
                 gCInv = gCur.inv()
                 gErr = gCInv*gDes
@@ -81,6 +81,12 @@ class linear(controller.linear.linear):
         if(isinstance(desTraj, Curves.CurveBase) or isinstance(desTraj, trajectory.Path)):
             self.compute = trackLinControl
             return trackLinControl
+    
+    def refresh(self,prev,t):
+        if(prev.pState == prev.TimePointState.GENERATE):
+            prev.control.tracker(prev.path)
+            prev.pState = prev.TimePointState.TRACK
+        return
     
     @staticmethod
     def systemDynamics(B=None):

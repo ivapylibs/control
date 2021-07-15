@@ -48,7 +48,6 @@ elif(initFlag == 2):
     g = theGroup(x=2*np.ones((3,1)), R=np.hstack((e1, e2, e3[:, np.newaxis])))
     xi = g.log(Dt)
     gd = lambda t: theGroup.exp(xi, t)
-print(gd)
 
 desTraj = Curves.Explicit(gd)
 theSim = simController(theSolver, theController.tracker(desTraj))
