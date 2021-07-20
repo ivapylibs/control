@@ -89,9 +89,8 @@ xDes = desTraj.x(tplt)
 ax.plot(xDes[0,:], xDes[1,:], xDes[2,:])
 plt.title("Desired frames")
 for i in t:
-    desPos = mapToSE3(desTraj.x(i))
-    desPos.plot(ax=ax, scale=0.5)
-ax.set_aspect([ub - lb for lb, ub in (getattr(ax, f'get_{a}lim')() for a in 'xyz')])
+    mapToSE3(desTraj.x(i)).plot(ax=ax, scale=0.5)
+ax.set_box_aspect([ub - lb for lb, ub in (getattr(ax, f'get_{a}lim')() for a in 'xyz')])
 
 plt.figure(2)
 ax = plt.axes(projection='3d')
@@ -101,5 +100,5 @@ for i in tDisc:
     solPos = sol.x[int(i)]
     solPos.plot(ax=ax, scale=0.5)
 plt.title("Tracking")
-ax.set_aspect([ub - lb for lb, ub in (getattr(ax, f'get_{a}lim')() for a in 'xyz')])
+ax.set_box_aspect([ub - lb for lb, ub in (getattr(ax, f'get_{a}lim')() for a in 'xyz')])
 plt.show()
